@@ -5,382 +5,270 @@ const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
+const ffmpeg = require("fluent-ffmpeg");
+const ffmpegPath = require("ffmpeg-static");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ===================================
-// DIMASCLIP CONFIGURATION
-// ===================================
-
 const uploadDir = "/tmp/dimasclip-uploads";
+const clipDir = path.join(uploadDir, "clips");
 
 fs.mkdirSync(uploadDir, { recursive: true });
+fs.mkdirSync(clipDir, { recursive: true });
+
+ffmpeg.setFfmpegPath(ffmpegPath);
 
 app.use(cors());
-app.use(express.json({ limit: "1mb" }));
+app.use(express.json());
 
-// Temporary project storage.
-// Production persistence will be added later.
 const projects = new Map();
 
-// ===================================
-// VIDEO UPLOAD CONFIGURATION
-// ===================================
-
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDir);
-  },
-
+  destination: (req, file, cb) => cb(null, uploadDir),
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname).toLowerCase();
     cb(null, crypto.randomUUID() + ext);
   }
 });
 
-const allowedExtensions = [
-  ".mp4",
-  ".mov",
-  ".webm",
-  ".m4v",
-  ".mkv"
-];
-
 const upload = multer({
   storage,
-
-  limits: {
-    fileSize: 100 * 1024 * 1024
-  },
-
+  limits: { fileSize: 100 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
+    const allowed = [".mp4", ".mov", ".webm", ".m4v", ".mkv"];
     const ext = path.extname(file.originalname).toLowerCase();
 
-    if (
-      file.mimetype.startsWith("video/") &&
-      allowedExtensions.includes(ext)
-    ) {
-      return cb(null, true);
-    }
-
+    if (allowed.includes(ext)) return cb(null, true);
     cb(new Error("Unsupported video format."));
   }
 });
 
-// ===================================
-// YOUTUBE LINK VALIDATION
-// ===================================
-
-function getYouTubeVideoId(input) {
-  try {
-    const parsed = new URL(input);
-
-    const host = parsed.hostname.toLowerCase();
-
-    const allowedHosts = [
-      "youtube.com",
-      "www.youtube.com",
-      "m.youtube.com",
-      "youtu.be",
-      "www.youtube-nocookie.com",
-      "youtube-nocookie.com"
-    ];
-
-    if (!allowedHosts.includes(host)) {
-      return null;
-    }
-
-    let videoId = null;
-
-    if (host === "youtu.be") {
-      videoId = parsed.pathname.split("/")[1];
-    } else if (parsed.pathname === "/watch") {
-      videoId = parsed.searchParams.get("v");
-    } else {
-      const match = parsed.pathname.match(
-        /^\/(shorts|embed|live)\/([a-zA-Z0-9_-]+)/
-      );
-
-      if (match) {
-        videoId = match[2];
-      }
-    }
-
-    if (!videoId || !/^[a-zA-Z0-9_-]{11}$/.test(videoId)) {
-      return null;
-    }
-
-    return videoId;
-
-  } catch {
-    return null;
-  }
-}
-
-// ===================================
-// CREATE PROJECT
-// ===================================
-
-function createProject(data) {
-  const project = {
-    id: crypto.randomUUID(),
-
-    name: data.name || "Untitled Project",
-
-    source: data.source,
-
-    sourceUrl: data.sourceUrl || null,
-
-    videoId: data.videoId || null,
-
-    status: data.status || "created",
-
-    createdAt: new Date().toISOString(),
-
-    video: null
-  };
-
-  projects.set(project.id, project);
-
-  return project;
-}
-
-// ===================================
-// HOME
-// ===================================
-
 app.get("/", (req, res) => {
   res.json({
-    name: "DIMASCLIP API",
+    name: "DIMASCLIP Backend",
     status: "online",
-    version: "2.0",
-    features: [
-      "Video uploads",
-      "YouTube link validation",
-      "Project management",
-      "Video metadata"
-    ]
+    version: "3.0"
   });
 });
-
-// ===================================
-// HEALTH CHECK
-// ===================================
 
 app.get("/api/health", (req, res) => {
   res.json({
-    status: "healthy",
-    service: "DIMASCLIP",
-    version: "2.0",
-    storage: "ready",
-    timestamp: new Date().toISOString()
+    status: "ok",
+    version: "3.0",
+    engine: "connected",
+    videoProcessing: Boolean(ffmpegPath)
   });
 });
 
-// ===================================
-// YOUTUBE IMPORT
-// ===================================
-
 app.post("/api/import", (req, res) => {
-  const { url } = req.body || {};
+  const { url } = req.body;
 
-  if (!url || typeof url !== "string") {
-    return res.status(400).json({
-      success: false,
-      error: "Please provide a YouTube video link."
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.replace(/^www\./, "");
+
+    const validHosts = [
+      "youtube.com",
+      "m.youtube.com",
+      "youtu.be"
+    ];
+
+    if (!validHosts.includes(host)) {
+      return res.status(400).json({
+        error: "Please enter a valid YouTube link."
+      });
+    }
+
+    const id = crypto.randomUUID();
+
+    const project = {
+      id,
+      sourceUrl: url,
+      status: "awaiting_video_file",
+      video: null,
+      clips: [],
+      createdAt: new Date().toISOString()
+    };
+
+    projects.set(id, project);
+
+    res.json({
+      success: true,
+      message: "YouTube link accepted. Upload an authorized video file to continue.",
+      project
     });
+  } catch {
+    res.status(400).json({ error: "Invalid URL." });
+  }
+});
+
+app.post("/api/upload", upload.single("video"), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No video file received." });
   }
 
-  const videoId = getYouTubeVideoId(url);
+  let project = req.body.projectId
+    ? projects.get(req.body.projectId)
+    : null;
 
-  if (!videoId) {
-    return res.status(400).json({
-      success: false,
-      error: "Invalid YouTube link. Please check your URL."
-    });
+  if (!project) {
+    const id = crypto.randomUUID();
+
+    project = {
+      id,
+      sourceUrl: null,
+      status: "video_uploaded",
+      clips: [],
+      createdAt: new Date().toISOString()
+    };
+
+    projects.set(id, project);
   }
 
-  const project = createProject({
-    name: "YouTube Project " + videoId,
-    source: "youtube",
-    sourceUrl: url,
-    videoId,
-    status: "awaiting_video_file"
-  });
+  project.video = {
+    name: req.file.originalname,
+    filename: req.file.filename,
+    path: req.file.path,
+    size: req.file.size
+  };
 
-  res.status(201).json({
+  project.status = "video_uploaded";
+
+  res.json({
     success: true,
-
-    status: "awaiting_video_file",
-
-    message:
-      "YouTube link validated! Provide an authorized video file to continue processing.",
-
+    message: "Video uploaded successfully.",
     project: {
       id: project.id,
-      name: project.name,
-      source: project.source,
-      videoId: project.videoId,
+      video: { name: project.video.name },
       status: project.status
     }
   });
 });
 
-// ===================================
-// UPLOAD VIDEO FILE
-// ===================================
+// Create a video clip using start time and duration
+app.post("/api/projects/:id/clip", (req, res) => {
+  const project = projects.get(req.params.id);
 
-app.post("/api/upload", upload.single("video"), (req, res) => {
-  if (!req.file) {
+  if (!project || !project.video) {
+    return res.status(404).json({
+      error: "Project or uploaded video not found."
+    });
+  }
+
+  const startTime = Number(req.body.startTime);
+  const duration = Number(req.body.duration);
+
+  if (
+    !Number.isFinite(startTime) ||
+    !Number.isFinite(duration) ||
+    startTime < 0 ||
+    duration <= 0 ||
+    duration > 180
+  ) {
     return res.status(400).json({
-      success: false,
-      error: "No video file uploaded."
+      error: "Enter a valid start time and a duration up to 180 seconds."
     });
   }
 
-  const projectId = req.body?.projectId;
+  if (!fs.existsSync(project.video.path)) {
+    return res.status(404).json({
+      error: "Uploaded video file is no longer available. Please upload it again."
+    });
+  }
 
-  let project;
+  const filename = crypto.randomUUID() + ".mp4";
+  const outputPath = path.join(clipDir, filename);
 
-  if (projectId) {
-    project = projects.get(projectId);
+  project.status = "processing";
 
-    if (!project) {
-      fs.unlink(req.file.path, () => {});
+  ffmpeg(project.video.path)
+    .setStartTime(startTime)
+    .setDuration(duration)
+    .videoCodec("libx264")
+    .audioCodec("aac")
+    .outputOptions(["-movflags +faststart"])
+    .on("end", () => {
+      const clip = {
+        filename,
+        url: `/api/clips/${filename}`,
+        startTime,
+        duration
+      };
 
-      return res.status(404).json({
-        success: false,
-        error: "Project not found."
+      project.clips.push(clip);
+      project.status = "clip_created";
+
+      res.json({
+        success: true,
+        message: "Your clip is ready!",
+        clip
       });
-    }
-  } else {
-    project = createProject({
-      name: path.parse(req.file.originalname).name,
-      source: "upload",
-      status: "uploaded"
-    });
-  }
+    })
+    .on("error", (error) => {
+      project.status = "video_uploaded";
+      console.error("FFmpeg error:", error.message);
 
-  project.video = {
-    id: path.parse(req.file.filename).name,
-    name: req.file.originalname,
-    size: req.file.size,
-    format: path.extname(req.file.originalname).toLowerCase()
-  };
-
-  project.status = "uploaded";
-
-  res.status(201).json({
-    success: true,
-
-    message: "Video uploaded successfully!",
-
-    project: {
-      id: project.id,
-      name: project.name,
-      source: project.source,
-      status: project.status,
-      video: project.video
-    }
-  });
+      if (!res.headersSent) {
+        res.status(500).json({
+          error: "Video processing failed. Please try another video."
+        });
+      }
+    })
+    .save(outputPath);
 });
 
-// ===================================
-// GET ALL PROJECTS
-// ===================================
+// Download a generated clip
+app.get("/api/clips/:filename", (req, res) => {
+  const filename = req.params.filename;
+
+  if (!/^[a-f0-9-]+\.mp4$/i.test(filename)) {
+    return res.status(400).json({ error: "Invalid filename." });
+  }
+
+  const filePath = path.join(clipDir, filename);
+
+  if (!fs.existsSync(filePath)) {
+    return res.status(404).json({ error: "Clip not found." });
+  }
+
+  res.download(filePath);
+});
 
 app.get("/api/projects", (req, res) => {
-  res.json({
-    success: true,
-    total: projects.size,
-    projects: Array.from(projects.values())
-  });
+  res.json({ projects: Array.from(projects.values()) });
 });
-
-// ===================================
-// GET ONE PROJECT
-// ===================================
 
 app.get("/api/projects/:id", (req, res) => {
   const project = projects.get(req.params.id);
 
   if (!project) {
-    return res.status(404).json({
-      success: false,
-      error: "Project not found."
-    });
+    return res.status(404).json({ error: "Project not found." });
   }
 
-  res.json({
-    success: true,
-    project
-  });
+  res.json({ project });
 });
-
-// ===================================
-// DELETE PROJECT
-// ===================================
 
 app.delete("/api/projects/:id", (req, res) => {
   const project = projects.get(req.params.id);
 
-  if (!project) {
-    return res.status(404).json({
-      success: false,
-      error: "Project not found."
-    });
-  }
-
-  if (project.video) {
-    const filename = project.video.id;
-    const videoPath = path.join(uploadDir, filename);
-
-    if (fs.existsSync(videoPath)) {
-      fs.unlink(videoPath, () => {});
-    }
+  if (project?.video?.path && fs.existsSync(project.video.path)) {
+    fs.unlinkSync(project.video.path);
   }
 
   projects.delete(req.params.id);
 
-  res.json({
-    success: true,
-    message: "Project deleted successfully."
-  });
+  res.json({ success: true });
 });
 
-// ===================================
-// ERROR HANDLING
-// ===================================
+app.use((error, req, res, next) => {
+  console.error(error.message);
 
-app.use((err, req, res, next) => {
-  console.error("DIMASCLIP ERROR:", err.message);
-
-  if (err instanceof multer.MulterError) {
-    if (err.code === "LIMIT_FILE_SIZE") {
-      return res.status(413).json({
-        success: false,
-        error: "Video exceeds the 100MB upload limit."
-      });
-    }
-  }
-
-  res.status(400).json({
-    success: false,
-    error: err.message || "Something went wrong."
+  res.status(error instanceof multer.MulterError ? 400 : 500).json({
+    error: error.message || "Something went wrong."
   });
 });
-
-// ===================================
-// START SERVER
-// ===================================
 
 app.listen(PORT, () => {
-  console.log("--------------------------------");
-  console.log("DIMASCLIP API v2.0");
-  console.log("Server running on port " + PORT);
-  console.log("Video uploads: READY");
-  console.log("YouTube validation: READY");
-  console.log("Project management: READY");
-  console.log("--------------------------------");
+  console.log(`DIMASCLIP backend running on port ${PORT}`);
 });
