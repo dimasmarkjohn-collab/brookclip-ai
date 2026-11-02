@@ -4,93 +4,350 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BrookClip AI</title>
+<title>ClipForge AI - Free Video Studio</title>
+
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#0b1020;color:#fff;font-family:Arial,sans-serif}
-header{padding:20px 7%;border-bottom:1px solid #26304a;display:flex;justify-content:space-between;align-items:center}
-.logo{font-size:22px;font-weight:bold;color:#a995ff}
-.tag{font-size:12px;color:#aeb5ca}
-main{max-width:850px;margin:65px auto;padding:20px;text-align:center}
-h1{font-size:clamp(35px,7vw,58px);margin-bottom:15px}
-h1 span{color:#9b80ff}
-p{color:#aeb5ca;line-height:1.7}
-.upload{margin:35px auto;padding:45px 20px;border:2px dashed #765aff;border-radius:18px;background:#151d35}
-.upload h3{margin-top:0}
-button,.filebtn{background:#7857ff;color:white;border:0;padding:13px 20px;border-radius:9px;font-weight:bold;cursor:pointer;display:inline-block}
-input[type=file]{display:none}
-select{background:#151d35;color:white;border:1px solid #39415c;padding:12px;border-radius:8px;margin:8px;max-width:100%}
-#filename{font-size:13px;color:#b8a9ff;margin:15px}
-.features{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:45px}
-.feature{background:#151d35;border:1px solid #29334e;padding:20px;border-radius:13px}
-.feature h3{font-size:15px}
-.feature p{font-size:12px}
-#message{display:none;background:#201b42;padding:15px;border-radius:10px;margin-top:20px;font-size:13px;color:#d8ceff}
-footer{padding:30px;text-align:center;color:#76809b;font-size:12px}
-@media(max-width:600px){.features{grid-template-columns:1fr}main{margin-top:35px}}
+* { box-sizing:border-box; }
+
+body {
+  margin:0;
+  background:#0d0b16;
+  color:white;
+  font-family:Arial,sans-serif;
+}
+
+header {
+  padding:20px;
+  border-bottom:1px solid #292239;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.logo {
+  font-size:23px;
+  font-weight:bold;
+  color:#bd91ff;
+}
+
+.tag {
+  background:#29203b;
+  padding:7px 12px;
+  border-radius:20px;
+  font-size:12px;
+  color:#c9a9ff;
+}
+
+main {
+  max-width:850px;
+  margin:auto;
+  padding:25px 16px;
+}
+
+.hero { text-align:center; margin:35px 0; }
+
+.hero h1 {
+  font-size:34px;
+  margin-bottom:10px;
+}
+
+.hero h1 span { color:#b987ff; }
+
+.muted { color:#9992aa; line-height:1.6; }
+
+.card {
+  background:#171322;
+  border:1px solid #332747;
+  border-radius:17px;
+  padding:20px;
+  margin-bottom:18px;
+}
+
+.card h2 { font-size:18px; }
+
+input, textarea, select {
+  width:100%;
+  padding:14px;
+  margin:8px 0;
+  border-radius:10px;
+  border:1px solid #46365f;
+  background:#211c2d;
+  color:white;
+  outline:none;
+}
+
+button {
+  background:linear-gradient(100deg,#7542c5,#ad69f5);
+  color:white;
+  padding:13px 16px;
+  border:0;
+  border-radius:10px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button:hover { opacity:.88; }
+
+.full { width:100%; }
+
+.grid {
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+
+.feature {
+  background:#211b30;
+  padding:17px;
+  border-radius:13px;
+}
+
+.feature b { display:block; margin-bottom:7px; }
+
+.output {
+  background:#211c2d;
+  padding:13px;
+  border-radius:10px;
+  margin-top:10px;
+  overflow-wrap:anywhere;
+  white-space:pre-wrap;
+}
+
+.clip {
+  padding:13px;
+  background:#211c2d;
+  border-radius:10px;
+  margin:10px 0;
+}
+
+small { color:#9992aa; }
+
+footer {
+  text-align:center;
+  padding:30px;
+  color:#777087;
+  font-size:12px;
+}
+
+@media(max-width:500px) {
+  .grid { grid-template-columns:1fr; }
+  .hero h1 { font-size:27px; }
+}
 </style>
 </head>
+
 <body>
+
 <header>
-<div class="logo">✂ BROOKCLIP AI</div>
-<div class="tag">FREE CREATOR TOOLKIT</div>
+  <div class="logo">✦ ClipForge AI</div>
+  <div class="tag">FREE EDITION</div>
 </header>
 
 <main>
-<div class="tag">AI VIDEO CLIPPING PLATFORM</div>
-<h1>Long videos.<br><span>Shorter work.</span></h1>
-<p>Turn podcasts, streams and interviews into engaging short-form videos.</p>
 
-<section class="upload">
-<h3>Upload your video</h3>
-<p>Choose an MP4, MOV or WEBM video from your device.</p>
-<label class="filebtn" for="video">Choose video ↑</label>
-<input id="video" type="file" accept="video/*">
-<div id="filename"></div>
-<br>
-<select id="ratio">
-<option>9:16 Shorts</option>
-<option>1:1 Square</option>
-<option>16:9 Landscape</option>
-</select>
-<br><br>
-<button onclick="generate()">Find my best moments ✦</button>
-<div id="message">Your video is selected! AI processing is not connected yet. That's our next development stage.</div>
+<section class="hero">
+  <h1>Turn Videos Into <span>Viral Clips.</span></h1>
+  <p class="muted">
+    Your simple video creation studio. Create hooks,
+    captions and manage multiple clips in one place.
+  </p>
 </section>
 
-<section class="features">
-<div class="feature">
-<h3>✦ AI Highlights</h3>
-<p>Find interesting moments in long videos.</p>
-</div>
-<div class="feature">
-<h3>▣ Auto Captions</h3>
-<p>Create subtitles for your short videos.</p>
-</div>
-<div class="feature">
-<h3>⚡ HD Export</h3>
-<p>Prepare vertical clips for Shorts and Reels.</p>
-</div>
+<section class="card">
+  <h2>🔗 Import Your Video</h2>
+  <p class="muted">Paste your YouTube or TikTok video link.</p>
+
+  <input id="videoLink"
+    type="url"
+    placeholder="Paste your video URL here...">
+
+  <button class="full" onclick="addVideo()">
+    + Add Video
+  </button>
+
+  <p id="videoStatus" class="muted"></p>
 </section>
+
+<section class="card">
+  <h2>✂️ Bulk Clip Workspace</h2>
+  <p class="muted">
+    Organize multiple clip ideas and track your editing progress.
+  </p>
+
+  <input id="clipName" placeholder="Enter clip name...">
+
+  <select id="clipLength">
+    <option value="15 seconds">15 seconds</option>
+    <option value="30 seconds">30 seconds</option>
+    <option value="45 seconds">45 seconds</option>
+    <option value="60 seconds">60 seconds</option>
+  </select>
+
+  <button class="full" onclick="addClip()">+ Add To Clip List</button>
+
+  <div id="clipList"></div>
+</section>
+
+<section class="card">
+  <h2>📝 AI Caption & Hook Generator</h2>
+  <p class="muted">
+    Generate content ideas using your own topic or video description.
+  </p>
+
+  <input id="topic" placeholder="Example: Funny trampoline fails">
+
+  <button class="full" onclick="generateContent()">
+    Generate Ideas ✨
+  </button>
+
+  <div id="generated" class="output" style="display:none"></div>
+  <button id="copyBtn" style="display:none;margin-top:10px"
+    onclick="copyContent()">Copy Ideas</button>
+</section>
+
+<section class="card">
+  <h2>📱 Video Settings</h2>
+  <div class="grid">
+    <div class="feature">
+      <b>Aspect Ratio</b>
+      <select id="ratio">
+        <option>9:16 Vertical</option>
+        <option>16:9 Landscape</option>
+        <option>1:1 Square</option>
+      </select>
+    </div>
+    <div class="feature">
+      <b>Caption Style</b>
+      <select id="captionStyle">
+        <option>Clean</option>
+        <option>Bold</option>
+        <option>Minimal</option>
+      </select>
+    </div>
+  </div>
+  <p class="muted">These are project preferences; actual video rendering is not connected yet.</p>
+</section>
+
+<section class="card">
+  <h2>📋 My Video Library</h2>
+  <div id="videoLibrary" class="muted">
+    No videos added yet.
+  </div>
+</section>
+
+<section class="card">
+  <h2>🚀 What's Included?</h2>
+  <div class="grid">
+    <div class="feature">✂️ <b>Clip Organizer</b><small>Manage clip ideas.</small></div>
+    <div class="feature">📝 <b>Caption Ideas</b><small>Create captions and hooks.</small></div>
+    <div class="feature">📦 <b>Bulk Workspace</b><small>Organize multiple clips.</small></div>
+    <div class="feature">📱 <b>Shorts Settings</b><small>Choose video formats.</small></div>
+  </div>
+</section>
+
 </main>
-<footer>© 2026 BrookClip AI · Built for creators</footer>
+
+<footer>
+  ClipForge AI © 2026 · Free Edition
+</footer>
 
 <script>
-const video=document.getElementById('video');
-video.addEventListener('change',()=>{
-const file=video.files[0];
-if(file){
-document.getElementById('filename').textContent=
-"Selected: "+file.name;
+let videos = [];
+let clips = [];
+
+function addVideo() {
+  const link = document.getElementById("videoLink").value.trim();
+  const status = document.getElementById("videoStatus");
+
+  try {
+    const url = new URL(link);
+    if (!["http:", "https:"].includes(url.protocol)) throw Error();
+
+    videos.push(link);
+    document.getElementById("videoLink").value = "";
+    status.textContent = "Video link added to your library!";
+    renderVideos();
+  } catch(e) {
+    status.textContent = "Please enter a valid video URL.";
+  }
 }
-});
-function generate(){
-if(!video.files.length){
-alert("Please choose a video first!");
-return;
+
+function renderVideos() {
+  document.getElementById("videoLibrary").innerHTML =
+    videos.map((v,i) =>
+      `<div class="clip">
+        Video ${i+1}<br>
+        <small>${escapeHTML(v)}</small>
+      </div>`
+    ).join("");
 }
-document.getElementById('message').style.display='block';
+
+function addClip() {
+  const name = document.getElementById("clipName").value.trim();
+  const length = document.getElementById("clipLength").value;
+
+  if(!name) return alert("Enter a clip name first!");
+
+  clips.push({name,length});
+  document.getElementById("clipName").value = "";
+  renderClips();
+}
+
+function renderClips() {
+  document.getElementById("clipList").innerHTML =
+    clips.map((c,i) =>
+      `<div class="clip">
+        <b>${escapeHTML(c.name)}</b>
+        <p><small>${escapeHTML(c.length)} · Clip ${i+1}</small></p>
+        <button onclick="removeClip(${i})">Remove</button>
+      </div>`
+    ).join("");
+}
+
+function removeClip(i) {
+  clips.splice(i,1);
+  renderClips();
+}
+
+function generateContent() {
+  const topic = document.getElementById("topic").value.trim();
+  if(!topic) return alert("Enter a topic first!");
+
+  const result =
+`VIDEO TOPIC: ${topic}
+
+HOOK IDEAS:
+1. You won't believe what happens next...
+2. This moment caught everyone off guard!
+3. Wait until you see the last one!
+
+CAPTION IDEAS:
+1. Which moment was the funniest?
+2. Rate this moment from 1-10!
+3. Follow for more funny moments!
+
+HASHTAGS:
+#Shorts #FunnyMoments #ViralClips`;
+
+  document.getElementById("generated").textContent = result;
+  document.getElementById("generated").style.display = "block";
+  document.getElementById("copyBtn").style.display = "inline-block";
+}
+
+function copyContent() {
+  const text = document.getElementById("generated").textContent;
+  navigator.clipboard.writeText(text)
+    .then(() => alert("Copied!"))
+    .catch(() => alert("Please select and copy the text manually."));
+}
+
+function escapeHTML(str) {
+  return str.replace(/[&<>"']/g, c => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;",
+    '"':"&quot;", "'":"&#39;"
+  }[c]));
 }
 </script>
+
 </body>
 </html>
