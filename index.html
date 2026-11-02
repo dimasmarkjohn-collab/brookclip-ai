@@ -5,254 +5,473 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DIMASCLIP AI Studio</title>
-
 <style>
+:root{
+ --bg:#0b0a12;--panel:#151320;--panel2:#1d1a2b;
+ --border:#30283f;--purple:#9664ed;--text:#f7f4ff;
+ --muted:#9992aa;--green:#66d6a0;
+}
 *{box-sizing:border-box}
-body{
-margin:0;background:#0d0b16;color:white;
-font-family:Arial,sans-serif;
+body{margin:0;background:var(--bg);color:var(--text);
+ font-family:Inter,Arial,sans-serif}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.app{display:flex;min-height:100vh}
+.sidebar{
+ width:245px;background:#100e19;border-right:1px solid var(--border);
+ padding:22px 15px;position:fixed;inset:0 auto 0 0;
+ display:flex;flex-direction:column;z-index:5
 }
-header{
-padding:20px;border-bottom:1px solid #302440;
-display:flex;justify-content:space-between;align-items:center;
+.brand{font-size:23px;font-weight:800;letter-spacing:-1px;
+ color:#c4a0ff;padding:5px 10px 28px}
+.brand span{color:white}
+.side-label{font-size:10px;color:#777085;
+ letter-spacing:1.5px;margin:18px 10px 9px}
+.nav{
+ display:flex;align-items:center;gap:12px;padding:12px;
+ border:0;background:transparent;color:#aaa2b9;
+ width:100%;text-align:left;border-radius:10px;
+ margin:2px 0;font-size:13px
 }
-.logo{font-size:23px;font-weight:bold;color:#c49aff}
-.tag{
-background:#302344;color:#d6b8ff;
-padding:7px 12px;border-radius:20px;font-size:12px
+.nav:hover,.nav.active{background:#292039;color:white}
+.nav.active{box-shadow:inset 3px 0 #aa7aff}
+.nav-icon{width:20px;text-align:center;font-size:16px}
+.sidebar-bottom{margin-top:auto}
+.free-box{background:#211a30;border:1px solid #403052;
+ border-radius:12px;padding:14px;font-size:12px}
+.free-box b{display:block;margin-bottom:7px}
+.free-box p{color:var(--muted);line-height:1.5}
+.main{margin-left:245px;width:calc(100% - 245px);min-width:0}
+.topbar{
+ height:67px;border-bottom:1px solid var(--border);
+ display:flex;align-items:center;justify-content:space-between;
+ padding:0 30px;background:#100e18
 }
-main{max-width:850px;margin:auto;padding:20px 16px}
-.hero{text-align:center;padding:35px 0}
-.hero h1{font-size:36px}
-.hero span{color:#b987ff}
-.muted{color:#a49bb4;line-height:1.6}
-.card{
-background:#171322;border:1px solid #38294e;
-border-radius:18px;padding:20px;margin-bottom:18px
+.topbar small{color:var(--muted)}
+.top-actions{display:flex;gap:10px;align-items:center}
+.avatar{width:34px;height:34px;border-radius:50%;
+ background:#6540a0;display:grid;place-items:center;font-weight:bold}
+.page{max-width:1200px;margin:auto;padding:30px}
+.page-header{display:flex;justify-content:space-between;
+ align-items:center;gap:15px;margin-bottom:25px}
+h1{font-size:27px;margin:0 0 7px;letter-spacing:-.6px}
+h2{font-size:17px;margin:0 0 10px}
+p{line-height:1.5}
+.muted{color:var(--muted);font-size:13px}
+.btn{
+ border:0;border-radius:9px;padding:11px 16px;
+ background:linear-gradient(110deg,#7545c3,#a46bf0);
+ color:white;font-weight:700;font-size:12px
 }
-.card h2{font-size:19px}
-input,select,textarea{
-width:100%;padding:14px;margin:8px 0;
-border-radius:10px;border:1px solid #49365e;
-background:#241e31;color:white;outline:none
+.btn.secondary{background:#282235;border:1px solid #423651}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.card{background:var(--panel);border:1px solid var(--border);
+ border-radius:14px;padding:19px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);
+ gap:13px;margin-bottom:20px}
+.stat{background:var(--panel);border:1px solid var(--border);
+ border-radius:13px;padding:17px}
+.stat-icon{font-size:20px;margin-bottom:12px}
+.stat-number{font-size:24px;font-weight:800}
+.stat-label{font-size:12px;color:var(--muted);margin-top:5px}
+.hero{
+ background:linear-gradient(120deg,#211735,#171323 65%,#21142f);
+ border:1px solid #47325f;border-radius:17px;
+ padding:25px;margin-bottom:20px;position:relative;overflow:hidden
 }
-button{
-background:linear-gradient(100deg,#7542c5,#ad69f5);
-color:white;padding:14px;border:0;
-border-radius:10px;font-weight:bold;cursor:pointer
+.hero:after{content:"✦";position:absolute;right:35px;top:0;
+ font-size:130px;color:#ad83ed;opacity:.09}
+.hero h2{font-size:23px}
+.hero p{max-width:520px;color:#b7acc9;font-size:13px}
+.hero .btn{margin-top:8px}
+.two-col{display:grid;grid-template-columns:1.35fr 1fr;gap:16px}
+.tool-grid{display:grid;grid-template-columns:repeat(3,1fr);
+ gap:12px;margin-top:14px}
+.tool{
+ background:#201b2c;border:1px solid #342a43;
+ border-radius:12px;padding:16px;cursor:pointer
 }
-button:hover{opacity:.85}
-.full{width:100%}
-.grid{
-display:grid;grid-template-columns:repeat(2,1fr);gap:12px
+.tool:hover{border-color:#9764e5;transform:translateY(-2px)}
+.tool-icon{font-size:23px;margin-bottom:12px}
+.tool b{font-size:13px;display:block;margin-bottom:6px}
+.tool small{color:var(--muted);font-size:11px;line-height:1.5}
+.field{
+ width:100%;padding:13px;border-radius:9px;
+ border:1px solid #40364f;background:#211d2b;color:white;
+ outline:none;margin:8px 0 12px;font-size:13px
 }
-.feature{
-background:#211b30;padding:17px;border-radius:13px
+.field:focus{border-color:#a477ed}
+.drop{
+ border:1px dashed #655080;border-radius:12px;
+ padding:24px;text-align:center;background:#1d1928;
+ margin-top:12px
 }
-.feature b{display:block;margin:7px 0}
-.output,.clip{
-background:#241e31;padding:14px;
-border-radius:10px;margin-top:12px;overflow-wrap:anywhere;
-white-space:pre-wrap
+.drop input{max-width:100%;margin-top:10px;font-size:12px}
+.project{
+ display:flex;justify-content:space-between;gap:10px;
+ padding:13px 0;border-bottom:1px solid #30283b;
+ align-items:center
 }
-small{color:#a49bb4}
-footer{text-align:center;padding:30px;color:#81778f}
-@media(max-width:500px){
-.grid{grid-template-columns:1fr}
-.hero h1{font-size:29px}
+.project:last-child{border:0}
+.project-name{font-size:13px;overflow-wrap:anywhere}
+.project-meta{font-size:11px;color:var(--muted);margin-top:5px}
+.pill{font-size:10px;background:#292039;color:#c9a7ff;
+ padding:5px 9px;border-radius:20px;white-space:nowrap}
+.empty{text-align:center;padding:25px;color:var(--muted);font-size:13px}
+.result{background:#211d2b;padding:15px;border-radius:10px;
+ white-space:pre-wrap;font-size:13px;line-height:1.7;
+ margin-top:12px;overflow-wrap:anywhere}
+.section{display:none}
+.section.active{display:block}
+label{font-size:12px;color:#c5bdce}
+hr{border:0;border-top:1px solid var(--border);margin:17px 0}
+footer{text-align:center;color:#716a7d;font-size:11px;padding:25px}
+.mobile-brand{display:none}
+@media(max-width:850px){
+ .sidebar{width:205px}
+ .main{margin-left:205px;width:calc(100% - 205px)}
+ .stats{grid-template-columns:repeat(2,1fr)}
+ .two-col{grid-template-columns:1fr}
+ .tool-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:600px){
+ .sidebar{width:65px;padding:15px 7px}
+ .brand{font-size:0;padding:8px 5px 25px}
+ .brand:after{content:"D";font-size:23px}
+ .side-label,.nav span:not(.nav-icon),.free-box{display:none}
+ .nav{justify-content:center;padding:13px 5px}
+ .nav-icon{font-size:19px}
+ .main{margin-left:65px;width:calc(100% - 65px)}
+ .topbar{padding:0 14px}
+ .page{padding:19px 13px}
+ .page-header{align-items:flex-start}
+ h1{font-size:23px}
+ .hero{padding:19px}
+ .hero h2{font-size:20px}
+ .tool-grid{grid-template-columns:1fr 1fr}
 }
 </style>
 </head>
 
 <body>
+<div class="app">
 
-<header>
-<div class="logo">✦ DIMASCLIP</div>
-<div class="tag">FREE EDITION</div>
-</header>
+<aside class="sidebar">
+ <div class="brand">DIMAS<span>CLIP</span></div>
 
-<main>
+ <div class="side-label">WORKSPACE</div>
+ <button class="nav active" data-page="dashboard"><span class="nav-icon">▦</span><span>Dashboard</span></button>
+ <button class="nav" data-page="clips"><span class="nav-icon">✂</span><span>AI Clips</span></button>
+ <button class="nav" data-page="bulk"><span class="nav-icon">▤</span><span>Bulk Clipping</span></button>
+ <button class="nav" data-page="editor"><span class="nav-icon">🎬</span><span>Video Editor</span></button>
 
-<section class="hero">
-<h1>Your Videos. <span>Our Creative Studio.</span></h1>
-<p class="muted">
-Welcome to DIMASCLIP AI Studio.
-Create, organize and prepare your short-form content.
-</p>
-</section>
+ <div class="side-label">AI TOOLS</div>
+ <button class="nav" data-page="captions"><span class="nav-icon">▤</span><span>AI Captions</span></button>
+ <button class="nav" data-page="hooks"><span class="nav-icon">✦</span><span>Hook Generator</span></button>
+ <button class="nav" data-page="reframe"><span class="nav-icon">▣</span><span>Auto Reframe</span></button>
 
-<section class="card">
-<h2>🔗 Paste Your Video Link</h2>
-<p class="muted">Add a YouTube or TikTok video URL.</p>
-<input id="videoLink" type="url"
-placeholder="Paste your video link here...">
-<button class="full" onclick="addVideo()">+ Add Video</button>
-<p id="videoStatus" class="muted"></p>
-</section>
+ <div class="side-label">LIBRARY</div>
+ <button class="nav" data-page="projects"><span class="nav-icon">▧</span><span>My Projects</span></button>
+ <button class="nav" data-page="exports"><span class="nav-icon">↓</span><span>Export Center</span></button>
 
-<section class="card">
-<h2>✂️ Bulk Clip Workspace</h2>
-<p class="muted">Organize multiple clip ideas in one place.</p>
-<input id="clipName" placeholder="Enter clip name...">
-<select id="clipLength">
-<option>15 seconds</option>
-<option>30 seconds</option>
-<option>45 seconds</option>
-<option>60 seconds</option>
-</select>
-<button class="full" onclick="addClip()">+ Add Clip</button>
-<div id="clipList"></div>
-</section>
+ <div class="sidebar-bottom">
+  <div class="free-box">
+   <b>✦ DIMASCLIP FREE</b>
+   <p>Your creative studio. No subscription required for this starter workspace.</p>
+  </div>
+ </div>
+</aside>
 
-<section class="card">
-<h2>✨ AI Hook & Caption Generator</h2>
-<p class="muted">Generate creative ideas for your Shorts.</p>
-<input id="topic" placeholder="Example: Funny trampoline fails">
-<button class="full" onclick="generateContent()">Generate Ideas ✨</button>
-<div id="generated" class="output" style="display:none"></div>
-<button id="copyBtn" style="display:none;margin-top:10px"
-onclick="copyContent()">Copy Ideas</button>
-</section>
+<div class="main">
+ <header class="topbar">
+  <div class="mobile-brand" style="font-weight:bold;color:#c4a0ff">DIMASCLIP</div>
+  <small id="breadcrumb">Workspace / Dashboard</small>
+  <div class="top-actions">
+   <span class="pill">FREE EDITION</span>
+   <div class="avatar">D</div>
+  </div>
+ </header>
 
-<section class="card">
-<h2>📱 Video Settings</h2>
-<div class="grid">
-<div class="feature">
-<b>Aspect Ratio</b>
-<select id="ratio">
-<option>9:16 Vertical</option>
-<option>16:9 Landscape</option>
-<option>1:1 Square</option>
-</select>
+ <main class="page">
+
+ <!-- DASHBOARD -->
+ <section class="section active" id="dashboard">
+  <div class="page-header">
+   <div>
+    <h1>Welcome to DIMASCLIP ✦</h1>
+    <div class="muted">Your all-in-one short video workspace.</div>
+   </div>
+   <button class="btn" onclick="showPage('clips')">+ New Project</button>
+  </div>
+
+  <div class="hero">
+   <span class="pill">YOUR AI VIDEO STUDIO</span>
+   <h2>Turn long videos into short-form content.</h2>
+   <p>Organize video projects, prepare clips, create captions and build your next Shorts workflow.</p>
+   <button class="btn" onclick="showPage('clips')">Start Creating →</button>
+  </div>
+
+  <div class="stats">
+   <div class="stat"><div class="stat-icon">🎬</div><div class="stat-number" id="statVideos">0</div><div class="stat-label">Video Projects</div></div>
+   <div class="stat"><div class="stat-icon">✂️</div><div class="stat-number" id="statClips">0</div><div class="stat-label">Clip Ideas</div></div>
+   <div class="stat"><div class="stat-icon">📝</div><div class="stat-number" id="statCaptions">0</div><div class="stat-label">Generated Ideas</div></div>
+   <div class="stat"><div class="stat-icon">📦</div><div class="stat-number" id="statExports">0</div><div class="stat-label">Exported Files</div></div>
+  </div>
+
+  <div class="two-col">
+   <div class="card">
+    <h2>Creative Tools</h2>
+    <p class="muted">Choose a tool to get started.</p>
+    <div class="tool-grid">
+     <div class="tool" onclick="showPage('clips')"><div class="tool-icon">✂️</div><b>AI Clips</b><small>Start a video project.</small></div>
+     <div class="tool" onclick="showPage('bulk')"><div class="tool-icon">📦</div><b>Bulk Clipping</b><small>Manage multiple clips.</small></div>
+     <div class="tool" onclick="showPage('captions')"><div class="tool-icon">📝</div><b>Captions</b><small>Prepare subtitle text.</small></div>
+     <div class="tool" onclick="showPage('hooks')"><div class="tool-icon">✨</div><b>AI Hooks</b><small>Generate opening ideas.</small></div>
+     <div class="tool" onclick="showPage('reframe')"><div class="tool-icon">📱</div><b>Reframe</b><small>Choose your format.</small></div>
+     <div class="tool" onclick="showPage('exports')"><div class="tool-icon">⬇️</div><b>Exports</b><small>View finished files.</small></div>
+    </div>
+   </div>
+   <div class="card">
+    <h2>Recent Projects</h2>
+    <div id="recentProjects" class="empty">Your projects will appear here.</div>
+   </div>
+  </div>
+ </section>
+
+ <!-- AI CLIPS -->
+ <section class="section" id="clips">
+  <div class="page-header"><div><h1>AI Clip Studio</h1><p class="muted">Start a new video project.</p></div></div>
+  <div class="card">
+   <h2>🔗 Paste Your Video Link</h2>
+   <p class="muted">Add a link to keep your video project organized.</p>
+   <input class="field" id="videoURL" placeholder="Paste YouTube or TikTok URL...">
+   <button class="btn" onclick="addVideo()">Add Video Project</button>
+   <hr>
+   <h2>Or upload a video file</h2>
+   <div class="drop">
+    <div style="font-size:30px">☁️</div>
+    <b>Choose a video from your device</b>
+    <p class="muted">Select an MP4, MOV or WebM file for local preview.</p>
+    <input type="file" id="videoFile" accept="video/*">
+    <div id="fileStatus" class="muted"></div>
+   </div>
+   <video id="videoPreview" controls style="display:none;width:100%;margin-top:15px;border-radius:10px;max-height:350px"></video>
+  </div>
+  <div class="card">
+   <h2>How clipping works</h2>
+   <p class="muted">Your video project is saved in this browser. Automatic AI highlight detection and finished MP4 rendering still need a connected processing engine.</p>
+  </div>
+ </section>
+
+ <!-- BULK -->
+ <section class="section" id="bulk">
+  <div class="page-header"><div><h1>Bulk Clip Workspace</h1><p class="muted">Organize multiple short-video ideas.</p></div></div>
+  <div class="card">
+   <h2>Add a clip idea</h2>
+   <input class="field" id="bulkName" placeholder="Clip name or highlight...">
+   <div class="two-col">
+    <div><label>Start time (seconds)</label><input class="field" type="number" id="startTime" min="0" placeholder="0"></div>
+    <div><label>End time (seconds)</label><input class="field" type="number" id="endTime" min="1" placeholder="30"></div>
+   </div>
+   <button class="btn" onclick="addClip()">+ Add Clip Idea</button>
+   <div id="bulkList"></div>
+  </div>
+  <div class="card">
+   <h2>Bulk workflow</h2>
+   <p class="muted">Create a list of moments to edit. These are clip plans, not rendered videos yet.</p>
+  </div>
+ </section>
+
+ <!-- EDITOR -->
+ <section class="section" id="editor">
+  <div class="page-header"><div><h1>Video Editor</h1><p class="muted">Your editing workspace.</p></div></div>
+  <div class="card">
+   <h2>Editing Preview</h2>
+   <p class="muted">Upload a video in AI Clip Studio to preview it here.</p>
+   <video id="editorPreview" controls style="width:100%;max-height:350px;display:none;border-radius:10px"></video>
+   <div class="empty" id="editorEmpty">🎬 Your video preview will appear here.</div>
+   <hr>
+   <h2>Editing tools</h2>
+   <div class="tool-grid">
+    <div class="tool"><div class="tool-icon">✂️</div><b>Trim</b><small>Plan clip start and end times.</small></div>
+    <div class="tool"><div class="tool-icon">🔤</div><b>Text</b><small>Prepare text overlays.</small></div>
+    <div class="tool"><div class="tool-icon">📱</div><b>Format</b><small>Choose a video ratio.</small></div>
+   </div>
+   <p class="muted">A full editing timeline and MP4 rendering engine are not connected yet.</p>
+  </div>
+ </section>
+
+ <!-- CAPTIONS -->
+ <section class="section" id="captions">
+  <div class="page-header"><div><h1>AI Captions</h1><p class="muted">Prepare subtitle text for your videos.</p></div></div>
+  <div class="card">
+   <h2>Caption Text Studio</h2>
+   <textarea class="field" id="captionInput" rows="6" placeholder="Paste your transcript or spoken words here..."></textarea>
+   <label>Caption style</label>
+   <select class="field" id="captionType">
+    <option>Clean and simple</option>
+    <option>Bold emphasis</option>
+    <option>Minimal subtitles</option>
+    <option>Short-form creator style</option>
+   </select>
+   <button class="btn" onclick="makeCaptions()">Format Captions</button>
+   <div id="captionResult" class="result" style="display:none"></div>
+   <button class="btn secondary" id="copyCaption" style="display:none;margin-top:10px" onclick="copyText('captionResult')">Copy Captions</button>
+  </div>
+  <div class="card"><p class="muted">This tool formats supplied text. Automatic speech transcription and synchronized animated subtitles require additional integration.</p></div>
+ </section>
+
+ <!-- HOOKS -->
+ <section class="section" id="hooks">
+  <div class="page-header"><div><h1>Hook Generator</h1><p class="muted">Create opening ideas for your Shorts.</p></div></div>
+  <div class="card">
+   <h2>What is your video about?</h2>
+   <input class="field" id="hookTopic" placeholder="Example: Ranking funniest trampoline fails">
+   <select class="field" id="hookTone">
+    <option value="curiosity">Curiosity</option>
+    <option value="funny">Funny</option>
+    <option value="dramatic">Dramatic</option>
+    <option value="formal">Formal</option>
+   </select>
+   <button class="btn" onclick="makeHooks()">Generate Hooks ✨</button>
+   <div id="hookResult" class="result" style="display:none"></div>
+   <button class="btn secondary" id="copyHook" style="display:none;margin-top:10px" onclick="copyText('hookResult')">Copy Hooks</button>
+  </div>
+ </section>
+
+ <!-- REFRAME -->
+ <section class="section" id="reframe">
+  <div class="page-header"><div><h1>Auto Reframe</h1><p class="muted">Choose your target video format.</p></div></div>
+  <div class="card">
+   <h2>Choose Aspect Ratio</h2>
+   <div class="tool-grid">
+    <div class="tool" onclick="chooseRatio('9:16')"><div class="tool-icon">📱</div><b>9:16 Vertical</b><small>YouTube Shorts and TikTok.</small></div>
+    <div class="tool" onclick="chooseRatio('16:9')"><div class="tool-icon">🖥️</div><b>16:9 Landscape</b><small>Standard widescreen.</small></div>
+    <div class="tool" onclick="chooseRatio('1:1')"><div class="tool-icon">⬜</div><b>1:1 Square</b><small>Square social posts.</small></div>
+   </div>
+   <div class="result" id="ratioResult">Selected format: 9:16</div>
+   <p class="muted">This sets your project preference. Automatic subject tracking and actual video reframing require the video engine.</p>
+  </div>
+ </section>
+
+ <!-- PROJECTS -->
+ <section class="section" id="projects">
+  <div class="page-header"><div><h1>My Projects</h1><p class="muted">Your saved video links and projects.</p></div></div>
+  <div class="card"><div id="allProjects" class="empty">No projects yet.</div></div>
+ </section>
+
+ <!-- EXPORTS -->
+ <section class="section" id="exports">
+  <div class="page-header"><div><h1>Export Center</h1><p class="muted">Your finished video files.</p></div></div>
+  <div class="card">
+   <h2>Exported Files</h2>
+   <div id="exportList" class="empty">No exported videos yet.</div>
+   <p class="muted">MP4 export will become available once the rendering engine is integrated.</p>
+  </div>
+ </section>
+
+ <footer>DIMASCLIP AI STUDIO · FREE EDITION · 2026</footer>
+ </main>
 </div>
-<div class="feature">
-<b>Caption Style</b>
-<select id="captionStyle">
-<option>Clean</option>
-<option>Bold</option>
-<option>Minimal</option>
-</select>
 </div>
-</div>
-<p class="muted">Choose your preferred editing settings.</p>
-</section>
-
-<section class="card">
-<h2>📂 My Video Library</h2>
-<div id="videoLibrary" class="muted">No videos added yet.</div>
-</section>
-
-<section class="card">
-<h2>🚀 DIMASCLIP Features</h2>
-<div class="grid">
-<div class="feature">✂️<b>Clip Organizer</b><small>Manage clip ideas.</small></div>
-<div class="feature">📝<b>Caption Generator</b><small>Prepare captions and hooks.</small></div>
-<div class="feature">📦<b>Bulk Workspace</b><small>Organize multiple clips.</small></div>
-<div class="feature">📱<b>Shorts Settings</b><small>Choose video formats.</small></div>
-<div class="feature">🔗<b>Link Manager</b><small>Keep video links organized.</small></div>
-<div class="feature">✨<b>Creative Studio</b><small>Plan your next content.</small></div>
-</div>
-</section>
-
-</main>
-
-<footer>
-DIMASCLIP AI STUDIO © 2026 · FREE EDITION
-</footer>
 
 <script>
-let videos=[];
-let clips=[];
+const pages=["dashboard","clips","bulk","editor","captions","hooks","reframe","projects","exports"];
+let videos=JSON.parse(localStorage.getItem("dimasVideos")||"[]");
+let clips=JSON.parse(localStorage.getItem("dimasClips")||"[]");
+let captionCount=0;
+let currentFileURL=null;
 
-function escapeHTML(str){
-return str.replace(/[&<>"']/g,c=>({
-"&":"&amp;","<":"&lt;",">":"&gt;",
-'"':"&quot;","'":"&#39;"
-}[c]));
+function save(){
+ localStorage.setItem("dimasVideos",JSON.stringify(videos));
+ localStorage.setItem("dimasClips",JSON.stringify(clips));
+ updateUI();
 }
+function showPage(id){
+ pages.forEach(p=>document.getElementById(p).classList.toggle("active",p===id));
+ document.querySelectorAll(".nav").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
+ document.getElementById("breadcrumb").textContent="Workspace / "+id.charAt(0).toUpperCase()+id.slice(1);
+ window.scrollTo(0,0);
+ updateUI();
+}
+document.querySelectorAll(".nav").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
 
 function addVideo(){
-const link=document.getElementById("videoLink").value.trim();
-const status=document.getElementById("videoStatus");
-
-try{
-const url=new URL(link);
-if(!["http:","https:"].includes(url.protocol))throw Error();
-
-videos.push(link);
-document.getElementById("videoLink").value="";
-status.textContent="Video link added successfully!";
-renderVideos();
-}catch(e){
-status.textContent="Please enter a valid video URL.";
+ const link=document.getElementById("videoURL").value.trim();
+ try{
+  const u=new URL(link);
+  if(!["http:","https:"].includes(u.protocol))throw Error();
+  videos.unshift({name:"Video Project "+(videos.length+1),link:link,date:new Date().toLocaleDateString()});
+  document.getElementById("videoURL").value="";
+  save();alert("Video project added!");
+ }catch(e){alert("Please enter a valid video URL.");}
 }
-}
-
-function renderVideos(){
-document.getElementById("videoLibrary").innerHTML=
-videos.map((v,i)=>`
-<div class="clip">
-<b>Video ${i+1}</b><br>
-<small>${escapeHTML(v)}</small>
-</div>`).join("");
-}
-
+document.getElementById("videoFile").addEventListener("change",function(){
+ const file=this.files[0];if(!file)return;
+ if(currentFileURL)URL.revokeObjectURL(currentFileURL);
+ currentFileURL=URL.createObjectURL(file);
+ const preview=document.getElementById("videoPreview");
+ preview.src=currentFileURL;preview.style.display="block";
+ const editor=document.getElementById("editorPreview");
+ editor.src=currentFileURL;editor.style.display="block";
+ document.getElementById("editorEmpty").style.display="none";
+ document.getElementById("fileStatus").textContent="Loaded: "+file.name+" (local preview)";
+});
 function addClip(){
-const name=document.getElementById("clipName").value.trim();
-const length=document.getElementById("clipLength").value;
-if(!name)return alert("Enter a clip name first!");
-
-clips.push({name,length});
-document.getElementById("clipName").value="";
-renderClips();
+ const name=document.getElementById("bulkName").value.trim();
+ const start=Number(document.getElementById("startTime").value||0);
+ const end=Number(document.getElementById("endTime").value||30);
+ if(!name)return alert("Enter a clip name.");
+ if(end<=start)return alert("End time must be after start time.");
+ clips.unshift({name,start,end});
+ document.getElementById("bulkName").value="";
+ save();
 }
-
-function renderClips(){
-document.getElementById("clipList").innerHTML=
-clips.map((c,i)=>`
-<div class="clip">
-<b>${escapeHTML(c.name)}</b>
-<p><small>${escapeHTML(c.length)} · Clip ${i+1}</small></p>
-<button onclick="removeClip(${i})">Remove</button>
-</div>`).join("");
+function removeClip(i){clips.splice(i,1);save();}
+function safe(s){
+ return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
-
-function removeClip(i){
-clips.splice(i,1);
-renderClips();
+function updateUI(){
+ document.getElementById("statVideos").textContent=videos.length;
+ document.getElementById("statClips").textContent=clips.length;
+ document.getElementById("statCaptions").textContent=captionCount;
+ const projectHTML=videos.map(v=>`<div class="project"><div><div class="project-name">${safe(v.name)}</div><div class="project-meta">${safe(v.link)}</div></div><span class="pill">PROJECT</span></div>`).join("");
+ document.getElementById("allProjects").innerHTML=projectHTML||'<div class="empty">No projects yet.</div>';
+ document.getElementById("recentProjects").innerHTML=projectHTML?projectHTML.split("</div>").slice(0,3).join("</div>")+"</div>":'<div class="empty">Your projects will appear here.</div>';
+ document.getElementById("bulkList").innerHTML=clips.map((c,i)=>`<div class="project"><div><div class="project-name">${safe(c.name)}</div><div class="project-meta">${c.start}s – ${c.end}s</div></div><button class="btn secondary" onclick="removeClip(${i})">Remove</button></div>`).join("")||'<div class="empty">Your clip ideas will appear here.</div>';
 }
-
-function generateContent(){
-const topic=document.getElementById("topic").value.trim();
-if(!topic)return alert("Enter a topic first!");
-
-const result=`TOPIC: ${topic}
-
-HOOK IDEAS:
-1. You won't believe what happens next!
-2. This moment caught everyone off guard!
-3. Wait until you see the last one!
-
-CAPTION IDEAS:
-1. Which moment was the funniest?
-2. Rate this moment from 1-10!
-3. Follow for more amazing clips!
-
-HASHTAGS:
-#Shorts #FunnyMoments #DIMASCLIP`;
-
-document.getElementById("generated").textContent=result;
-document.getElementById("generated").style.display="block";
-document.getElementById("copyBtn").style.display="inline-block";
+function makeHooks(){
+ const topic=document.getElementById("hookTopic").value.trim();
+ if(!topic)return alert("Enter a topic.");
+ const tone=document.getElementById("hookTone").value;
+ let lines;
+ if(tone==="funny")lines=["This might be the funniest "+topic+" ever!","Nobody was ready for this moment.","Wait... did that actually happen?"];
+ else if(tone==="dramatic")lines=["Everything changed in just one moment.","You need to see how this ends.","The final moment is unbelievable."];
+ else if(tone==="formal")lines=["Here are some of the best "+topic+".","Which moment stands out the most?","Watch until the final ranking."];
+ else lines=["You won't believe what happens next.","Wait until you see the final moment.","Which one do you think takes first place?"];
+ showResult("hookResult","copyHook","HOOK IDEAS\n\n"+lines.map((x,i)=>(i+1)+". "+x).join("\n"));
 }
-
-function copyContent(){
-navigator.clipboard.writeText(
-document.getElementById("generated").textContent
-).then(()=>alert("Ideas copied!"))
-.catch(()=>alert("Please copy the text manually."));
+function makeCaptions(){
+ const text=document.getElementById("captionInput").value.trim();
+ if(!text)return alert("Paste your transcript first.");
+ showResult("captionResult","copyCaption",text);
+ captionCount++;updateUI();
 }
+function showResult(id,buttonId,text){
+ document.getElementById(id).textContent=text;
+ document.getElementById(id).style.display="block";
+ document.getElementById(buttonId).style.display="inline-block";
+}
+function copyText(id){
+ const text=document.getElementById(id).textContent;
+ if(navigator.clipboard&&navigator.clipboard.writeText){
+  navigator.clipboard.writeText(text).then(()=>alert("Copied!")).catch(()=>alert("Please select and copy the text."));
+ }else alert("Please select and copy the text.");
+}
+function chooseRatio(r){
+ document.getElementById("ratioResult").textContent="Selected format: "+r;
+}
+updateUI();
 </script>
-
 </body>
 </html>
