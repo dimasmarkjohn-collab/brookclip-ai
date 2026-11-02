@@ -1,596 +1,204 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DIMASCLIP — AI Video Studio</title>
-<meta name="description" content="DIMASCLIP — Your free AI-powered video clipping studio.">
+<meta name="theme-color" content="#070811">
+<title>DIMASCLIP — AI Video Clipping Studio</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-
-:root {
-  --bg:#0b1420;
-  --surface:#111e2c;
-  --surface2:#18283a;
-  --border:#293b50;
-  --blue:#5599f5;
-  --blue2:#3478d5;
-  --white:#f7f9fc;
-  --muted:#9cabbc;
-}
-*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#070811;--panel:#101321;--panel2:#151a2b;--line:#252b40;--text:#f7f8ff;--muted:#a4abc2;--blue:#416dff;--purple:#854dff;--cyan:#35baff}
+*{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{
-  background:var(--bg);color:var(--white);
-  font-family:Inter,Arial,sans-serif;
-  overflow-x:hidden;
-}
-a{text-decoration:none;color:inherit}
+body{margin:0;background:radial-gradient(ellipse at 76% 17%,rgba(56,75,211,.18),transparent 27%),radial-gradient(ellipse at 4% 58%,rgba(87,48,180,.12),transparent 25%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+a{color:inherit;text-decoration:none}
 button,input{font:inherit}
 button{cursor:pointer}
-.container{width:min(1120px,92%);margin:auto}
-
-/* NAVIGATION */
-header{
-  border-bottom:1px solid #ffffff12;
-  background:#0b1420eF;
-  position:sticky;top:0;z-index:20;
-  backdrop-filter:blur(15px);
-}
-.nav{
-  height:76px;display:flex;align-items:center;
-  justify-content:space-between;
-}
-.logo{font-size:22px;font-weight:900;letter-spacing:-1.2px}
-.logo span{color:var(--blue)}
-.navlinks{display:flex;align-items:center;gap:29px}
-.navlinks a{font-size:12px;color:#b4c1d0}
-.navlinks a:hover{color:white}
-.nav-actions{display:flex;align-items:center;gap:12px}
-.login{font-size:12px;color:#c4cfdb}
-.nav-cta{
-  background:#edf4ff;color:#15283e;
-  border:0;padding:11px 17px;border-radius:8px;
-  font-size:12px;font-weight:800;
-}
-.menu{display:none;background:none;border:0;color:white;font-size:24px}
-
-/* HERO */
-.hero{
-  padding:94px 0 65px;text-align:center;
-  position:relative;
-}
-.hero:before{
-  content:"";position:absolute;z-index:-1;
-  width:650px;height:400px;top:10px;left:50%;
-  transform:translateX(-50%);
-  background:#2569b4;filter:blur(180px);opacity:.13;
-}
-.eyebrow{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:8px 13px;border:1px solid #3b526d;
-  background:#17283b;border-radius:30px;
-  color:#b7d6ff;font-size:10px;font-weight:700;
-  letter-spacing:.7px;margin-bottom:27px;
-}
-.eyedot{width:7px;height:7px;background:#62a7ff;border-radius:50%}
-h1{
-  font-size:clamp(43px,7vw,76px);
-  letter-spacing:-4px;line-height:1.07;
-  font-weight:900;max-width:900px;margin:auto;
-}
-h1 span{
-  background:linear-gradient(90deg,#dceaff,#68aaff);
-  -webkit-background-clip:text;background-clip:text;color:transparent;
-}
-.hero-desc{
-  max-width:590px;margin:22px auto 31px;
-  color:var(--muted);font-size:14px;line-height:1.8;
-}
-.input-panel{
-  max-width:690px;margin:auto;
-  padding:9px;background:#142235;
-  border:1px solid #40546c;border-radius:13px;
-  display:flex;gap:9px;
-  box-shadow:0 20px 70px #0005;
-}
-.input-panel input{
-  flex:1;min-width:0;background:transparent;
-  color:white;border:0;outline:0;padding:12px;
-  font-size:13px;
-}
-.input-panel input::placeholder{color:#8191a5}
-.primary{
-  background:linear-gradient(110deg,#5599f5,#3979d3);
-  color:white;border:0;border-radius:8px;
-  padding:13px 19px;font-size:12px;font-weight:800;
-  transition:.2s;
-}
-.primary:hover{filter:brightness(1.15);transform:translateY(-1px)}
-.upload-row{
-  display:flex;justify-content:center;align-items:center;
-  gap:12px;margin-top:18px;
-}
-.upload-btn{
-  border:1px solid #40536a;background:#1a2b3e;
-  color:#dceaff;padding:11px 17px;
-  border-radius:8px;font-size:11px;font-weight:700;
-}
-.upload-note{font-size:10px;color:#788da4}
-#fileInput{display:none}
-.notice{
-  max-width:690px;margin:12px auto 0;
-  color:#a8bdd4;font-size:11px;line-height:1.6;
-  min-height:18px;
-}
-
-/* PRODUCT PREVIEW */
-.preview{
-  max-width:920px;margin:65px auto 0;
-  background:#111e2c;border:1px solid #2d4056;
-  border-radius:16px;padding:15px;
-  text-align:left;box-shadow:0 28px 90px #0005;
-}
-.preview-top{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:5px 5px 15px;
-}
-.preview-title{font-size:12px;font-weight:800}
-.preview-status{
-  background:#1b3550;color:#91c2ff;
-  border-radius:20px;padding:7px 11px;font-size:9px;
-}
-.preview-grid{
-  display:grid;grid-template-columns:1.2fr .8fr;gap:13px;
-}
-.video-box{
-  min-height:275px;border-radius:11px;
-  background:radial-gradient(ellipse at center,#253c56,#101c2a 75%);
-  display:flex;align-items:center;justify-content:center;
-  position:relative;overflow:hidden;
-}
-.video-box video{width:100%;height:100%;max-height:330px;object-fit:contain}
-.video-placeholder{text-align:center;color:#d6e6f8}
-.video-placeholder .play{
-  width:53px;height:53px;border-radius:50%;
-  border:1px solid #ffffff55;background:#ffffff16;
-  display:grid;place-items:center;margin:0 auto 14px;
-  font-size:20px;
-}
-.video-placeholder p{font-size:11px;color:#a9bbce}
-.video-name{
-  position:absolute;bottom:12px;left:13px;
-  background:#0a1524bb;padding:7px 10px;
-  border-radius:6px;font-size:9px;color:#dceaff;
-}
-.clip-list{display:flex;flex-direction:column;gap:10px}
-.clip-card{
-  background:#19293b;border:1px solid #304359;
-  padding:14px;border-radius:10px;
-}
-.clip-card strong{font-size:11px;display:block;margin-bottom:7px}
-.clip-card p{font-size:10px;color:#9eafc1;line-height:1.6}
-.clip-time{font-size:9px;color:#7fb7ff;margin-top:9px}
-.bar{height:4px;background:#344a62;border-radius:5px;margin-top:10px}
-.bar span{display:block;height:100%;background:#69a9f7;border-radius:5px}
-
-/* GENERAL SECTIONS */
-section.content-section{padding:82px 0}
-.section-head{text-align:center;margin-bottom:38px}
-.kicker{
-  color:#7eb6ff;font-size:10px;font-weight:800;
-  letter-spacing:2px;text-transform:uppercase;
-}
-h2{
-  font-size:clamp(29px,4vw,42px);
-  letter-spacing:-1.8px;margin:13px 0;
-}
-.section-desc{
-  max-width:560px;margin:auto;color:var(--muted);
-  font-size:13px;line-height:1.8;
-}
-
-/* FEATURES */
-.feature-grid{
-  display:grid;grid-template-columns:repeat(3,1fr);gap:15px;
-}
-.feature{
-  padding:25px;background:linear-gradient(145deg,#152436,#101b29);
-  border:1px solid #2a3d52;border-radius:13px;
-  transition:.2s;
-}
-.feature:hover{border-color:#578bc5;transform:translateY(-3px)}
-.feature-icon{
-  width:42px;height:42px;border-radius:10px;
-  display:grid;place-items:center;background:#203b59;
-  color:#9ac8ff;font-size:20px;margin-bottom:19px;
-}
-.feature h3{font-size:14px;margin-bottom:9px}
-.feature p{font-size:11px;color:#9cabbc;line-height:1.8}
-.feature small{display:inline-block;color:#80b8fa;font-size:9px;margin-top:15px}
-
-/* WORKFLOW */
-.steps{
-  display:grid;grid-template-columns:repeat(3,1fr);gap:16px;
-}
-.step{
-  background:#121f2e;border:1px solid #293d52;
-  border-radius:12px;padding:24px;
-}
-.step-num{
-  color:#80b9ff;font-size:11px;font-weight:800;
-  margin-bottom:18px;
-}
-.step h3{font-size:14px;margin-bottom:9px}
-.step p{font-size:11px;color:#9cabbc;line-height:1.8}
-
-/* EDITOR SHOWCASE */
-.showcase{
-  display:grid;grid-template-columns:1fr 1fr;gap:35px;
-  align-items:center;
-}
-.showcase-panel{
-  background:#142235;border:1px solid #30445c;
-  padding:18px;border-radius:14px;
-}
-.showcase-screen{
-  height:230px;border-radius:9px;
-  background:linear-gradient(145deg,#243c57,#101b29);
-  display:grid;place-items:center;text-align:center;
-  color:#d9eaff;font-size:12px;
-}
-.showcase-screen strong{display:block;font-size:26px;margin-bottom:9px}
-.showcase h2{font-size:36px}
-.showcase p{font-size:12px;color:#9cabbc;line-height:1.9;margin:17px 0}
-.checks{list-style:none;display:grid;gap:13px}
-.checks li{font-size:11px;color:#c6d3e0}
-.checks li span{color:#79b5ff;margin-right:9px}
-
-/* FREE PLAN */
-.pricing{
-  max-width:480px;margin:auto;padding:30px;
-  border:1px solid #426187;
-  border-radius:15px;background:linear-gradient(145deg,#172b40,#101c2b);
-}
-.free-label{
-  color:#8fc1ff;font-size:10px;font-weight:800;
-  letter-spacing:1px;
-}
-.price{font-size:43px;font-weight:900;margin:12px 0}
-.price span{font-size:12px;color:#a1b2c4;font-weight:500}
-.pricing p{font-size:11px;color:#a5b5c6;line-height:1.7}
-.pricing ul{list-style:none;margin:22px 0;display:grid;gap:13px}
-.pricing li{font-size:11px;color:#d3dfeb}
-.pricing li span{color:#79b7ff;margin-right:9px}
-.pricing .primary{width:100%}
-
-/* FAQ */
-.faq{max-width:750px;margin:auto}
-details{
-  border-bottom:1px solid #29394b;padding:19px 4px;
-}
-summary{cursor:pointer;font-size:12px;font-weight:700}
-details p{font-size:11px;color:#9cabbc;line-height:1.8;margin-top:13px}
-
-/* FOOTER */
-footer{border-top:1px solid #ffffff15;padding:32px 0}
-.footer-inner{
-  display:flex;justify-content:space-between;
-  align-items:center;gap:20px;flex-wrap:wrap;
-}
-footer p{font-size:10px;color:#8495a8}
-.footer-links{display:flex;gap:20px}
-.footer-links a{font-size:10px;color:#a4b3c3}
-
-/* RESPONSIVE */
-@media(max-width:760px){
-  .navlinks{display:none}
-  .menu{display:block}
-  .nav{height:66px}
-  .nav-actions .login{display:none}
-  .hero{padding:70px 0 40px}
-  h1{letter-spacing:-2.5px}
-  .hero-desc{font-size:12px}
-  .input-panel{flex-direction:column}
-  .input-panel input{padding:14px}
-  .input-panel .primary{width:100%}
-  .preview{margin-top:42px}
-  .preview-grid{grid-template-columns:1fr}
-  .video-box{min-height:220px}
-  .feature-grid{grid-template-columns:repeat(2,1fr)}
-  .steps{grid-template-columns:1fr}
-  .showcase{grid-template-columns:1fr}
-  .showcase h2{font-size:30px}
-  section.content-section{padding:60px 0}
-}
-@media(max-width:430px){
-  .feature-grid{grid-template-columns:1fr}
-  .upload-row{flex-direction:column}
-  .upload-note{text-align:center}
-  .preview-top{gap:10px}
-}
+.wrap{width:min(1480px,92%);margin:auto}
+header{height:76px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;position:sticky;top:0;z-index:20;background:rgba(7,8,17,.86);backdrop-filter:blur(18px)}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:24px}
+.brand{display:flex;align-items:center;gap:11px;font-size:21px;font-weight:850;letter-spacing:-.7px}
+.brandmark{width:34px;height:34px;border-radius:11px;background:linear-gradient(145deg,#347dff,#7042ff);display:grid;place-items:center;box-shadow:0 0 28px #426bff66}
+.brandmark svg{width:19px;height:19px;fill:white}
+.links{display:flex;gap:34px;color:#c2c7d8;font-size:14px}
+.links a:hover{color:white}
+.navright{display:flex;align-items:center;gap:12px}
+.btn{border:1px solid var(--line);border-radius:13px;padding:12px 18px;color:white;background:#151827;font-weight:700;font-size:13px;transition:.2s}
+.btn:hover{transform:translateY(-2px);border-color:#657cff}
+.btn.primary{border:0;background:linear-gradient(100deg,#286cff,#7546ff);box-shadow:0 8px 26px #4c56ff44}
+.hero{display:grid;grid-template-columns:1fr 1.06fr;gap:44px;align-items:center;padding:76px 0 54px;min-height:570px}
+.pill{display:inline-flex;align-items:center;gap:9px;border:1px solid #35345f;background:#15152b;border-radius:30px;padding:8px 14px;color:#d7d8ff;font-size:12px;font-weight:700}
+.dot{width:8px;height:8px;border-radius:50%;background:#8756ff;box-shadow:0 0 12px #8756ff}
+h1{font-size:clamp(44px,5.6vw,76px);line-height:.99;letter-spacing:-4px;margin:20px 0 20px;font-weight:850}
+.gradient{background:linear-gradient(90deg,#9a5dff,#4e8dff);background-clip:text;-webkit-background-clip:text;color:transparent}
+.lead{font-size:18px;line-height:1.55;color:#aeb5ca;max-width:530px;margin:0 0 27px}
+.linkform{display:flex;gap:10px;padding:8px;border:1px solid #30364e;background:#101321;border-radius:17px;max-width:620px;box-shadow:0 14px 40px #0005}
+.linkform input{min-width:0;flex:1;background:transparent;border:0;outline:0;color:white;padding:0 12px;font-size:14px}
+.linkform input::placeholder{color:#828ba6}
+.linkform button{white-space:nowrap}
+.or{display:flex;align-items:center;gap:14px;color:#828ba6;font-size:12px;margin:14px 0}
+.or:before,.or:after{content:"";height:1px;background:#252b40;flex:1}
+.upload{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;max-width:620px;border:1px solid #30364e;background:#121625;border-radius:15px;padding:15px;color:white;font-weight:700}
+.upload:hover{border-color:#657cff;background:#171d31}
+.filehint{color:#7e879f;font-size:11px;margin:10px 0 0 5px}
+.trust{display:flex;align-items:center;gap:12px;color:#b8bfd2;font-size:13px;margin-top:25px}
+.avatars{display:flex;padding-left:5px}
+.avatar{width:28px;height:28px;border-radius:50%;border:2px solid #0a0b14;margin-left:-6px;background:linear-gradient(135deg,#6c7ca8,#282e49);display:grid;place-items:center;font-size:11px}
+.stars{color:#ffc94f;letter-spacing:2px}
+.mockup{position:relative;border:1px solid #333b5b;background:linear-gradient(145deg,#141a2c,#090b14 75%);border-radius:24px;padding:13px;box-shadow:0 25px 90px #0009,0 0 55px #4a52ff25;transform:perspective(1200px) rotateY(-4deg)}
+.mocktop{height:34px;display:flex;align-items:center;justify-content:space-between;padding:0 6px 10px;color:#cbd1e3;font-size:12px}
+.mockbody{display:grid;grid-template-columns:112px 1fr 205px;gap:12px;min-height:310px}
+.mockside{border-right:1px solid #242a3d;padding:14px 4px}
+.mockside div{padding:11px 8px;color:#929bb5;font-size:11px;border-radius:9px;margin-bottom:4px}
+.mockside .active{color:white;background:#20264a}
+.preview{position:relative;min-height:235px;border-radius:12px;overflow:hidden;background:linear-gradient(135deg,#25385e,#11172c);display:grid;place-items:center}
+.preview img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;opacity:.68}
+.play{position:relative;width:54px;height:54px;border-radius:50%;background:#ffffffdf;color:#111;display:grid;place-items:center;font-size:20px;padding-left:3px;box-shadow:0 5px 25px #0008}
+.previewlabel{position:absolute;bottom:10px;left:12px;font-size:11px;background:#070811c9;padding:6px 9px;border-radius:7px}
+.clips{padding:7px 3px}
+.clipshead{display:flex;justify-content:space-between;font-size:12px;margin:2px 0 12px}
+.clipshead span:last-child{color:#8298ff}
+.clip{display:flex;align-items:center;gap:8px;background:#171d2e;border:1px solid #293149;padding:7px;border-radius:10px;margin-bottom:9px;font-size:10px;color:#cbd2e6}
+.thumb{width:58px;height:39px;border-radius:6px;background:linear-gradient(135deg,#3b6bb5,#342456);flex-shrink:0;display:grid;place-items:center;color:#fff}
+.cliptime{margin-left:auto;color:#aab3ca}
+.timeline{grid-column:2/4;display:flex;align-items:center;gap:8px;padding:9px 2px 3px}
+.track{height:38px;flex:1;border-radius:8px;background:repeating-linear-gradient(90deg,#34405f 0 24px,#202b48 24px 29px);border:1px solid #3b4c82;position:relative;overflow:hidden}
+.track:after{content:"";position:absolute;left:32%;top:0;bottom:0;width:27%;background:#7854ff88;border-left:2px solid #a58cff;border-right:2px solid #a58cff}
+.features{padding:34px 0 70px}
+.featuregrid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.feature{background:linear-gradient(145deg,#151a2a,#0e111c);border:1px solid #252c41;border-radius:17px;padding:20px 17px;min-height:128px}
+.featureicon{width:29px;height:29px;border-radius:9px;background:#1d2b56;color:#78a0ff;display:grid;place-items:center;font-weight:900;margin-bottom:13px}
+.feature h3{font-size:14px;margin:0 0 6px}
+.feature p{font-size:12px;line-height:1.45;color:#9da6bd;margin:0}
+.sectionhead{text-align:center;margin-bottom:28px}
+.sectionhead h2{font-size:32px;letter-spacing:-1.3px;margin:12px 0 8px}
+.sectionhead p{color:#9fa8c0;margin:0}
+.workflow{display:grid;grid-template-columns:.8fr 1.5fr;gap:50px;align-items:center;padding:24px 0 78px}
+.workflow h2{font-size:42px;line-height:1.04;letter-spacing:-1.8px;margin:17px 0 12px}
+.workflow p{color:#9fa8c0;line-height:1.5}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.step{background:linear-gradient(145deg,#151b2e,#101321);border:1px solid #252c43;border-radius:17px;padding:24px 15px;text-align:center;min-height:175px}
+.stepnum{width:29px;height:29px;margin:0 auto 16px;border-radius:50%;background:linear-gradient(135deg,#2879ff,#7548ff);display:grid;place-items:center;font-size:12px;font-weight:800}
+.step strong{display:block;font-size:13px;margin-bottom:8px}
+.step small{color:#9da6bd;line-height:1.45}
+.cta{margin:0 0 60px;padding:32px 38px;border:1px solid #303957;border-radius:23px;background:radial-gradient(ellipse at 8% 50%,#263a73 0,transparent 35%),linear-gradient(110deg,#141a2b,#090c16);display:flex;align-items:center;justify-content:space-between;gap:20px}
+.cta h2{font-size:28px;margin:0 0 7px;letter-spacing:-1px}
+.cta p{margin:0;color:#aab3c9}
+footer{border-top:1px solid #22283a;padding:28px 0;color:#8e97ad;font-size:12px}
+.foot{display:flex;align-items:center;justify-content:space-between;gap:20px}
+.footlinks{display:flex;gap:22px}
+#status{font-size:12px;color:#aebcff;margin-top:10px;min-height:18px}
+#videoFile{display:none}
+@media(max-width:1050px){.hero{grid-template-columns:1fr;gap:35px;padding-top:55px}.mockup{max-width:760px;width:100%;margin:auto}.featuregrid{grid-template-columns:repeat(3,1fr)}.workflow{grid-template-columns:1fr;gap:25px}}
+@media(max-width:650px){header{height:65px}.links{display:none}.brand{font-size:18px}.navright .signin{display:none}.navright .btn{padding:10px 12px;font-size:11px}.hero{padding:43px 0 30px;gap:28px}h1{font-size:47px;letter-spacing:-2.7px}.lead{font-size:15px}.linkform{flex-wrap:wrap}.linkform input{flex-basis:100%;padding:10px}.linkform button{width:100%}.mockup{padding:8px;transform:none}.mockbody{grid-template-columns:70px 1fr;gap:7px;min-height:220px}.mockside{padding:8px 1px}.mockside div{font-size:9px;padding:9px 4px}.preview{min-height:175px}.clips{grid-column:1/3;display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.clipshead{grid-column:1/4}.clip{display:block;margin:0;padding:5px;font-size:9px}.thumb{width:100%;height:36px;margin-bottom:5px}.cliptime{display:block;margin:4px 0 0}.timeline{grid-column:1/3}.featuregrid{grid-template-columns:repeat(2,1fr);gap:9px}.feature{padding:15px 12px;min-height:120px}.sectionhead h2{font-size:26px}.workflow h2{font-size:36px}.steps{grid-template-columns:1fr}.step{min-height:130px}.cta{padding:25px 20px;display:block}.cta .btn{margin-top:20px;width:100%}.foot{flex-direction:column;text-align:center}.footlinks{flex-wrap:wrap;justify-content:center}}
 </style>
 </head>
 <body>
-
 <header>
-  <div class="container nav">
-    <a href="#" class="logo">DIMAS<span>CLIP.</span></a>
-    <nav class="navlinks">
-      <a href="#features">Features</a>
-      <a href="#how">How it works</a>
-      <a href="#studio">Studio</a>
-      <a href="#pricing">Pricing</a>
-    </nav>
-    <div class="nav-actions">
-      <a class="login" href="#studio">Open Studio</a>
-      <button class="nav-cta" onclick="document.getElementById('studio').scrollIntoView({behavior:'smooth'})">Get Started →</button>
-    </div>
-    <button class="menu" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">☰</button>
+  <div class="wrap nav">
+    <a class="brand" href="#"><span class="brandmark"><svg viewBox="0 0 24 24"><path d="M7 4.8c0-1.5 1.7-2.4 3-1.6l11 7.2a1.9 1.9 0 0 1 0 3.2l-11 7.2c-1.3.8-3-.1-3-1.6V4.8Z"/></svg></span> DIMASCLIP</a>
+    <nav class="links"><a href="#features">Product⌄</a><a href="#workflow">Solutions⌄</a><a href="#workflow">Resources⌄</a><a href="#pricing">Pricing</a></nav>
+    <div class="navright"><a class="btn signin" href="#studio">Sign in</a><a class="btn primary" href="#studio">Get Started Free →</a></div>
   </div>
 </header>
 
-<main>
-<section class="hero container" id="studio">
-  <div class="eyebrow"><span class="eyedot"></span> YOUR FREE VIDEO CLIPPING STUDIO</div>
-  <h1>Turn Long Videos Into <span>Short-Form Content.</span></h1>
-  <p class="hero-desc">
-    Transform your long videos into engaging Shorts, Reels and TikToks.
-    One workspace for your entire video clipping workflow.
-  </p>
-
-  <div class="input-panel">
-    <input id="videoLink" type="url" placeholder="Paste your video link here..." aria-label="Video link">
-    <button class="primary" onclick="submitLink()">Get Started →</button>
+<main class="wrap">
+<section class="hero" id="studio">
+  <div>
+    <span class="pill"><span class="dot"></span> AI-POWERED VIDEO CLIPPING</span>
+    <h1>Turn Long Videos<br>Into <span class="gradient">Viral Shorts.</span></h1>
+    <p class="lead">Upload, clip, and edit with the power of AI. Create engaging short-form content with a workflow built for creators.</p>
+    <form class="linkform" id="linkForm">
+      <input id="videoLink" type="url" placeholder="↗  Paste YouTube link here..." aria-label="Paste video link">
+      <button class="btn primary" type="submit">Generate Clips →</button>
+    </form>
+    <div class="or">or</div>
+    <label class="upload" for="videoFile">⇧ <span>Upload a video</span></label>
+    <input id="videoFile" type="file" accept="video/*">
+    <p class="filehint">Choose a video file from your device. Short MP4 files work best for testing.</p>
+    <div id="status" role="status"></div>
+    <div class="trust"><div class="avatars"><span class="avatar">D</span><span class="avatar">C</span><span class="avatar">✦</span><span class="avatar">V</span></div><span>Made for creators</span><span class="stars">★★★★★</span><span>Creator-focused studio</span></div>
   </div>
-  <div class="upload-row">
-    <button class="upload-btn" onclick="document.getElementById('fileInput').click()">↑ Upload a video</button>
-    <input id="fileInput" type="file" accept="video/*">
-    <span class="upload-note">Upload a video file from your device</span>
-  </div>
-  <div class="notice" id="notice" aria-live="polite"></div>
 
-  <div class="preview">
-    <div class="preview-top">
-      <span class="preview-title">Your AI Clipping Workspace</span>
-      <span class="preview-status">STUDIO PREVIEW</span>
-    </div>
-    <div class="preview-grid">
-      <div class="video-box" id="videoBox">
-        <div class="video-placeholder" id="videoPlaceholder">
-          <div class="play">▶</div>
-          <strong>Your video preview</strong>
-          <p>Upload a video to see it here</p>
-        </div>
-        <video id="videoPreview" controls hidden></video>
-        <div class="video-name" id="videoName">DIMASCLIP VIDEO STUDIO</div>
-      </div>
-      <div class="clip-list">
-        <div class="clip-card">
-          <strong>01 · Highlight moment</strong>
-          <p>AI-selected moments will appear here when the clipping engine is connected.</p>
-          <div class="clip-time">CLIP PREVIEW</div>
-          <div class="bar"><span style="width:72%"></span></div>
-        </div>
-        <div class="clip-card">
-          <strong>02 · Short-form clip</strong>
-          <p>Your generated vertical clips will be organized in this workspace.</p>
-          <div class="clip-time">CLIP PREVIEW</div>
-          <div class="bar"><span style="width:54%"></span></div>
-        </div>
-        <div class="clip-card">
-          <strong>03 · Ready to edit</strong>
-          <p>Review, adjust and export your finished content.</p>
-          <div class="clip-time">EDITOR PREVIEW</div>
-          <div class="bar"><span style="width:88%"></span></div>
-        </div>
-      </div>
+  <div class="mockup" aria-label="Preview of the DIMASCLIP editing interface">
+    <div class="mocktop"><span>▶ &nbsp; DIMASCLIP STUDIO</span><span>◐ &nbsp; ●</span></div>
+    <div class="mockbody">
+      <aside class="mockside"><div class="active">⌂ &nbsp; Home</div><div>▣ &nbsp; Projects</div><div>▤ &nbsp; Templates</div><div>✧ &nbsp; AI Tools</div><div>⚙ &nbsp; Settings</div></aside>
+      <div class="preview" id="previewBox"><div class="play">▶</div><span class="previewlabel" id="previewLabel">VIDEO PREVIEW · 9:16</span></div>
+      <div class="clips"><div class="clipshead"><strong>Clip workspace</strong><span>Preview</span></div><div class="clip"><div class="thumb">▶</div><span>Clip idea 01</span><span class="cliptime">00:12</span></div><div class="clip"><div class="thumb">▶</div><span>Clip idea 02</span><span class="cliptime">00:18</span></div><div class="clip"><div class="thumb">▶</div><span>Clip idea 03</span><span class="cliptime">00:09</span></div></div>
+      <div class="timeline"><span>▶</span><div class="track"></div><span>⛶</span></div>
     </div>
   </div>
 </section>
 
-<section class="content-section container" id="features">
-  <div class="section-head">
-    <div class="kicker">Powerful tools</div>
-    <h2>Everything you need to create.</h2>
-    <p class="section-desc">A complete collection of tools designed to make your short-form video workflow easier.</p>
-  </div>
-  <div class="feature-grid">
-    <article class="feature">
-      <div class="feature-icon">✂</div>
-      <h3>AI Clip Generator</h3>
-      <p>Find interesting moments in long videos and turn them into short clips.</p>
-      <small>AI ENGINE · PLANNED</small>
-    </article>
-    <article class="feature">
-      <div class="feature-icon">CC</div>
-      <h3>AI Captions</h3>
-      <p>Generate subtitles and customize the appearance of your captions.</p>
-      <small>TRANSCRIPTION · PLANNED</small>
-    </article>
-    <article class="feature">
-      <div class="feature-icon">▣</div>
-      <h3>Auto Reframe</h3>
-      <p>Adapt landscape videos to vertical formats for Shorts and Reels.</p>
-      <small>REFRAMING · PLANNED</small>
-    </article>
-    <article class="feature">
-      <div class="feature-icon">⚡</div>
-      <h3>Bulk Clipping</h3>
-      <p>Organize multiple clips and prepare them for batch processing.</p>
-      <small>BATCH ENGINE · PLANNED</small>
-    </article>
-    <article class="feature">
-      <div class="feature-icon">↗</div>
-      <h3>Virality Insights</h3>
-      <p>Review suggested highlights and estimated engagement signals.</p>
-      <small>AI ANALYSIS · PLANNED</small>
-    </article>
-    <article class="feature">
-      <div class="feature-icon">▤</div>
-      <h3>Video Editor</h3>
-      <p>Trim clips, adjust captions and prepare your final video.</p>
-      <small>EDITOR · PLANNED</small>
-    </article>
+<section class="features" id="features">
+  <div class="sectionhead"><span class="pill"><span class="dot"></span> CREATOR TOOLKIT</span><h2>Everything you need in one studio.</h2><p>A clean workspace designed to make short-form video creation easier.</p></div>
+  <div class="featuregrid">
+    <article class="feature"><div class="featureicon">ϟ</div><h3>AI Clipping</h3><p>Find the strongest moments in your videos.</p></article>
+    <article class="feature"><div class="featureicon">CC</div><h3>Auto Captions</h3><p>Add readable subtitles to your clips.</p></article>
+    <article class="feature"><div class="featureicon">⛶</div><h3>Auto Reframe</h3><p>Prepare content for vertical platforms.</p></article>
+    <article class="feature"><div class="featureicon">▦</div><h3>Bulk Editing</h3><p>Organize multiple clip projects in one place.</p></article>
+    <article class="feature"><div class="featureicon">↗</div><h3>Virality Insights</h3><p>Review clip ideas and improve your hooks.</p></article>
+    <article class="feature"><div class="featureicon">⇩</div><h3>Video Export</h3><p>Export options will be added as the editor develops.</p></article>
   </div>
 </section>
 
-<section class="content-section container" id="how">
-  <div class="section-head">
-    <div class="kicker">Simple workflow</div>
-    <h2>From long video to short content.</h2>
-    <p class="section-desc">The workflow we're building for your next video project.</p>
-  </div>
+<section class="workflow" id="workflow">
+  <div><span class="pill"><span class="dot"></span> SIMPLE WORKFLOW</span><h2>Your videos.<br>Your creative studio.</h2><p>Start with a video, shape the moments you want, and prepare content for your favorite platforms.</p><a class="btn primary" href="#studio">Open the studio →</a></div>
   <div class="steps">
-    <article class="step">
-      <div class="step-num">01 / IMPORT</div>
-      <h3>Bring your video</h3>
-      <p>Upload a video file you own or have permission to edit.</p>
-    </article>
-    <article class="step">
-      <div class="step-num">02 / CREATE</div>
-      <h3>Find your moments</h3>
-      <p>Use clipping tools to select highlights, add captions and reframe your video.</p>
-    </article>
-    <article class="step">
-      <div class="step-num">03 / EXPORT</div>
-      <h3>Publish your content</h3>
-      <p>Review your clips and export them for your favorite platforms.</p>
-    </article>
+    <div class="step"><div class="stepnum">01</div><strong>Upload a video</strong><small>Choose a video file from your device.</small></div>
+    <div class="step"><div class="stepnum">02</div><strong>Edit your moments</strong><small>Build your clip workflow and refine your ideas.</small></div>
+    <div class="step"><div class="stepnum">03</div><strong>Export and share</strong><small>Export tools will arrive as processing features are added.</small></div>
   </div>
 </section>
 
-<section class="content-section container">
-  <div class="showcase">
-    <div>
-      <div class="kicker">Built for creators</div>
-      <h2>Your video workflow. One studio.</h2>
-      <p>Keep your projects, video tools and finished clips organized in one place. DIMASCLIP is designed to grow into a complete video production workspace.</p>
-      <ul class="checks">
-        <li><span>✓</span> Video project organization</li>
-        <li><span>✓</span> Short-form editing workflow</li>
-        <li><span>✓</span> Vertical video production</li>
-        <li><span>✓</span> Export-ready projects</li>
-      </ul>
-    </div>
-    <div class="showcase-panel">
-      <div class="showcase-screen">
-        <div>
-          <strong>▣</strong>
-          DIMASCLIP STUDIO
-          <p style="font-size:10px;color:#a6bad0;margin-top:9px">Your creative workspace</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="content-section container" id="pricing">
-  <div class="section-head">
-    <div class="kicker">Simple pricing</div>
-    <h2>Made to be free.</h2>
-    <p class="section-desc">Our goal is to make the core DIMASCLIP experience accessible without a subscription.</p>
-  </div>
-  <div class="pricing">
-    <div class="free-label">DIMASCLIP FREE EDITION</div>
-    <div class="price">$0 <span>/ forever</span></div>
-    <p>No subscription or paid credit system planned for the core browser-based tools.</p>
-    <ul>
-      <li><span>✓</span> Free website access</li>
-      <li><span>✓</span> Local video preview</li>
-      <li><span>✓</span> Free and open-source processing tools</li>
-      <li><span>✓</span> No artificial daily export limits as a design goal</li>
-      <li><span>✓</span> Creator-focused workspace</li>
-    </ul>
-    <button class="primary" onclick="document.getElementById('fileInput').click()">Start Creating →</button>
-    <p style="margin-top:13px;font-size:9px">Processing capacity depends on your device. Some advanced AI features may require additional resources.</p>
-  </div>
-</section>
-
-<section class="content-section container">
-  <div class="section-head">
-    <div class="kicker">Questions</div>
-    <h2>Frequently asked questions.</h2>
-  </div>
-  <div class="faq">
-    <details>
-      <summary>Is DIMASCLIP free?</summary>
-      <p>Yes. We're building around free and open-source tools, with no subscription planned for the core experience.</p>
-    </details>
-    <details>
-      <summary>Can I create YouTube Shorts?</summary>
-      <p>That's the main purpose of DIMASCLIP. Video cutting, vertical formatting and exporting are part of our development plan.</p>
-    </details>
-    <details>
-      <summary>Can I paste a YouTube link?</summary>
-      <p>The link field is currently a visual starting point. Direct importing will require a supported integration. You can use video files you own or have permission to edit.</p>
-    </details>
-    <details>
-      <summary>Does every AI feature work already?</summary>
-      <p>Not yet. The homepage is ready as a front-end. The video-processing and AI engines will be connected and tested separately.</p>
-    </details>
-  </div>
+<section class="cta" id="pricing">
+  <div><h2>Powerful tools. Creator-first.</h2><p>Explore the DIMASCLIP studio as it grows—no paid plan required to view this demo.</p></div>
+  <a class="btn primary" href="#studio">Start Creating →</a>
 </section>
 </main>
-
-<footer>
-  <div class="container footer-inner">
-    <a href="#" class="logo">DIMAS<span>CLIP.</span></a>
-    <p>© 2026 DIMASCLIP. Built for creators.</p>
-    <div class="footer-links">
-      <a href="#features">Features</a>
-      <a href="#pricing">Pricing</a>
-      <a href="#how">About</a>
-    </div>
-  </div>
-</footer>
+<footer><div class="wrap foot"><a class="brand" href="#"><span class="brandmark"><svg viewBox="0 0 24 24"><path d="M7 4.8c0-1.5 1.7-2.4 3-1.6l11 7.2a1.9 1.9 0 0 1 0 3.2l-11 7.2c-1.3.8-3-.1-3-1.6V4.8Z"/></svg></span> DIMASCLIP</a><div class="footlinks"><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#workflow">How it works</a><a href="#studio">Studio</a></div><span>© 2026 DIMASCLIP. Built for creators.</span></div></footer>
 
 <script>
-const fileInput = document.getElementById('fileInput');
-const videoPreview = document.getElementById('videoPreview');
-const placeholder = document.getElementById('videoPlaceholder');
-const videoName = document.getElementById('videoName');
-const notice = document.getElementById('notice');
-let currentURL = null;
+const statusBox = document.getElementById('status');
+const fileInput = document.getElementById('videoFile');
+const previewBox = document.getElementById('previewBox');
+let currentPreviewUrl = null;
 
-fileInput.addEventListener('change', function() {
-  const file = this.files && this.files[0];
+fileInput.addEventListener('change', () => {
+  const file = fileInput.files && fileInput.files[0];
   if (!file) return;
-
   if (!file.type.startsWith('video/')) {
-    notice.textContent = 'Please select a valid video file.';
+    statusBox.textContent = 'Please choose a video file.';
     return;
   }
-
-  if (currentURL) URL.revokeObjectURL(currentURL);
-  currentURL = URL.createObjectURL(file);
-
-  videoPreview.src = currentURL;
-  videoPreview.hidden = false;
-  placeholder.hidden = true;
-  videoName.textContent = file.name;
-  notice.textContent = 'Video loaded! The preview works. Video clipping and export are the next development step.';
+  if (currentPreviewUrl) URL.revokeObjectURL(currentPreviewUrl);
+  currentPreviewUrl = URL.createObjectURL(file);
+  previewBox.innerHTML = '';
+  const video = document.createElement('video');
+  video.src = currentPreviewUrl;
+  video.controls = true;
+  video.playsInline = true;
+  video.style.cssText = 'width:100%;height:100%;min-height:220px;object-fit:contain;background:#05060b';
+  previewBox.appendChild(video);
+  statusBox.textContent = 'Video loaded for preview: ' + file.name + '. This demo does not cut or export clips yet.';
 });
 
-function submitLink() {
-  const input = document.getElementById('videoLink');
-  const value = input.value.trim();
-
-  if (!value) {
-    notice.textContent = 'Please paste a video link first.';
-    input.focus();
+document.getElementById('linkForm').addEventListener('submit', (event) => {
+  event.preventDefault();
+  const link = document.getElementById('videoLink').value.trim();
+  if (!link) {
+    statusBox.textContent = 'Paste a video link first.';
     return;
   }
-
   try {
-    const url = new URL(value);
-    if (!['http:', 'https:'].includes(url.protocol)) throw new Error();
-    notice.textContent = 'Link received. Direct video importing is not connected yet. You can upload a video file to preview it.';
+    const parsed = new URL(link);
+    if (!['http:', 'https:'].includes(parsed.protocol)) throw new Error('Invalid');
+    localStorage.setItem('dimasclip_video_reference', link);
+    statusBox.textContent = 'Link saved as a project reference. Direct link importing and AI clipping are not connected yet.';
   } catch {
-    notice.textContent = 'Please enter a valid web link.';
+    statusBox.textContent = 'That link does not look valid. Please paste a full https:// link.';
   }
-}
+});
 </script>
 </body>
 </html>
