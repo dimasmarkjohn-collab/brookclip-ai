@@ -197,23 +197,48 @@ async function checkBackend() {
   }
 }
 
-fileInput.addEventListener('change', () => {
+fileInput.addEventListener('change', async () => {
   const file = fileInput.files && fileInput.files[0];
   if (!file) return;
+
   if (!file.type.startsWith('video/')) {
     statusBox.textContent = 'Please choose a video file.';
     return;
   }
+
+  if (file.size > 100 * 1024 * 1024) {
+    statusBox.textContent = 'Video must be smaller than 100 MB.';
+    return;
+  }
+
   if (currentPreviewUrl) URL.revokeObjectURL(currentPreviewUrl);
   currentPreviewUrl = URL.createObjectURL(file);
   previewBox.innerHTML = '';
+
   const video = document.createElement('video');
   video.src = currentPreviewUrl;
   video.controls = true;
   video.playsInline = true;
   video.style.cssText = 'width:100%;height:100%;min-height:220px;object-fit:contain;background:#05060b';
   previewBox.appendChild(video);
-  statusBox.textContent = 'Video loaded for local preview. Server upload and AI clipping are not connected yet.';
+
+  statusBox.textContent = 'Uploading video to DIMASCLIP...';
+
+  try {
+    const formData = new FormData();
+    formData.append('video', file);
+
+    const response = await fetch(`${API_BASE}/api/upload`, {
+      method: 'POST',
+      body: formData
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Upload failed.');
+
+    statusBox.textContent = `Upload successful! ${result.file.name} received by DIMASCLIP.`;
+  } catch (error) {
+    statusBox.textContent = `Upload failed: ${error.message}`;
+  }
 });
 
 document.getElementById('linkForm').addEventListener('submit', async (event) => {
