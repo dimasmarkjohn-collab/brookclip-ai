@@ -2,202 +2,158 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#070811">
-<title>DIMASCLIP — AI Video Clipping Studio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#080a12">
+<title>DIMASCLIP Studio</title>
 <style>
-:root{--bg:#070811;--panel:#101321;--panel2:#151a2b;--line:#252b40;--text:#f7f8ff;--muted:#a4abc2;--blue:#416dff;--purple:#854dff;--cyan:#35baff}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;background:radial-gradient(ellipse at 76% 17%,rgba(56,75,211,.18),transparent 27%),radial-gradient(ellipse at 4% 58%,rgba(87,48,180,.12),transparent 25%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-a{color:inherit;text-decoration:none}
-button,input{font:inherit}
-button{cursor:pointer}
-.wrap{width:min(1480px,92%);margin:auto}
-header{height:76px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;position:sticky;top:0;z-index:20;background:rgba(7,8,17,.86);backdrop-filter:blur(18px)}
-.nav{display:flex;align-items:center;justify-content:space-between;gap:24px}
-.brand{display:flex;align-items:center;gap:11px;font-size:21px;font-weight:850;letter-spacing:-.7px}
-.brandmark{width:34px;height:34px;border-radius:11px;background:linear-gradient(145deg,#347dff,#7042ff);display:grid;place-items:center;box-shadow:0 0 28px #426bff66}
-.brandmark svg{width:19px;height:19px;fill:white}
-.links{display:flex;gap:34px;color:#c2c7d8;font-size:14px}
-.links a:hover{color:white}
-.navright{display:flex;align-items:center;gap:12px}
-.btn{border:1px solid var(--line);border-radius:13px;padding:12px 18px;color:white;background:#151827;font-weight:700;font-size:13px;transition:.2s}
-.btn:hover{transform:translateY(-2px);border-color:#657cff}
-.btn.primary{border:0;background:linear-gradient(100deg,#286cff,#7546ff);box-shadow:0 8px 26px #4c56ff44}
-.hero{display:grid;grid-template-columns:1fr 1.06fr;gap:44px;align-items:center;padding:76px 0 54px;min-height:570px}
-.pill{display:inline-flex;align-items:center;gap:9px;border:1px solid #35345f;background:#15152b;border-radius:30px;padding:8px 14px;color:#d7d8ff;font-size:12px;font-weight:700}
-.dot{width:8px;height:8px;border-radius:50%;background:#8756ff;box-shadow:0 0 12px #8756ff}
-h1{font-size:clamp(44px,5.6vw,76px);line-height:.99;letter-spacing:-4px;margin:20px 0 20px;font-weight:850}
-.gradient{background:linear-gradient(90deg,#9a5dff,#4e8dff);background-clip:text;-webkit-background-clip:text;color:transparent}
-.lead{font-size:18px;line-height:1.55;color:#aeb5ca;max-width:530px;margin:0 0 27px}
-.linkform{display:flex;gap:10px;padding:8px;border:1px solid #30364e;background:#101321;border-radius:17px;max-width:620px;box-shadow:0 14px 40px #0005}
-.linkform input{min-width:0;flex:1;background:transparent;border:0;outline:0;color:white;padding:0 12px;font-size:14px}
-.linkform input::placeholder{color:#828ba6}
-.linkform button{white-space:nowrap}
-.or{display:flex;align-items:center;gap:14px;color:#828ba6;font-size:12px;margin:14px 0}
-.or:before,.or:after{content:"";height:1px;background:#252b40;flex:1}
-.upload{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;max-width:620px;border:1px solid #30364e;background:#121625;border-radius:15px;padding:15px;color:white;font-weight:700}
-.upload:hover{border-color:#657cff;background:#171d31}
-.filehint{color:#7e879f;font-size:11px;margin:10px 0 0 5px}
-.trust{display:flex;align-items:center;gap:12px;color:#b8bfd2;font-size:13px;margin-top:25px}
-.avatars{display:flex;padding-left:5px}
-.avatar{width:28px;height:28px;border-radius:50%;border:2px solid #0a0b14;margin-left:-6px;background:linear-gradient(135deg,#6c7ca8,#282e49);display:grid;place-items:center;font-size:11px}
-.stars{color:#ffc94f;letter-spacing:2px}
-.mockup{position:relative;border:1px solid #333b5b;background:linear-gradient(145deg,#141a2c,#090b14 75%);border-radius:24px;padding:13px;box-shadow:0 25px 90px #0009,0 0 55px #4a52ff25;transform:perspective(1200px) rotateY(-4deg)}
-.mocktop{height:34px;display:flex;align-items:center;justify-content:space-between;padding:0 6px 10px;color:#cbd1e3;font-size:12px}
-.mockbody{display:grid;grid-template-columns:112px 1fr 205px;gap:12px;min-height:310px}
-.mockside{border-right:1px solid #242a3d;padding:14px 4px}
-.mockside div{padding:11px 8px;color:#929bb5;font-size:11px;border-radius:9px;margin-bottom:4px}
-.mockside .active{color:white;background:#20264a}
-.preview{position:relative;min-height:235px;border-radius:12px;overflow:hidden;background:linear-gradient(135deg,#25385e,#11172c);display:grid;place-items:center}
-.preview img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;opacity:.68}
-.play{position:relative;width:54px;height:54px;border-radius:50%;background:#ffffffdf;color:#111;display:grid;place-items:center;font-size:20px;padding-left:3px;box-shadow:0 5px 25px #0008}
-.previewlabel{position:absolute;bottom:10px;left:12px;font-size:11px;background:#070811c9;padding:6px 9px;border-radius:7px}
-.clips{padding:7px 3px}
-.clipshead{display:flex;justify-content:space-between;font-size:12px;margin:2px 0 12px}
-.clipshead span:last-child{color:#8298ff}
-.clip{display:flex;align-items:center;gap:8px;background:#171d2e;border:1px solid #293149;padding:7px;border-radius:10px;margin-bottom:9px;font-size:10px;color:#cbd2e6}
-.thumb{width:58px;height:39px;border-radius:6px;background:linear-gradient(135deg,#3b6bb5,#342456);flex-shrink:0;display:grid;place-items:center;color:#fff}
-.cliptime{margin-left:auto;color:#aab3ca}
-.timeline{grid-column:2/4;display:flex;align-items:center;gap:8px;padding:9px 2px 3px}
-.track{height:38px;flex:1;border-radius:8px;background:repeating-linear-gradient(90deg,#34405f 0 24px,#202b48 24px 29px);border:1px solid #3b4c82;position:relative;overflow:hidden}
-.track:after{content:"";position:absolute;left:32%;top:0;bottom:0;width:27%;background:#7854ff88;border-left:2px solid #a58cff;border-right:2px solid #a58cff}
-.features{padding:34px 0 70px}
-.featuregrid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
-.feature{background:linear-gradient(145deg,#151a2a,#0e111c);border:1px solid #252c41;border-radius:17px;padding:20px 17px;min-height:128px}
-.featureicon{width:29px;height:29px;border-radius:9px;background:#1d2b56;color:#78a0ff;display:grid;place-items:center;font-weight:900;margin-bottom:13px}
-.feature h3{font-size:14px;margin:0 0 6px}
-.feature p{font-size:12px;line-height:1.45;color:#9da6bd;margin:0}
-.sectionhead{text-align:center;margin-bottom:28px}
-.sectionhead h2{font-size:32px;letter-spacing:-1.3px;margin:12px 0 8px}
-.sectionhead p{color:#9fa8c0;margin:0}
-.workflow{display:grid;grid-template-columns:.8fr 1.5fr;gap:50px;align-items:center;padding:24px 0 78px}
-.workflow h2{font-size:42px;line-height:1.04;letter-spacing:-1.8px;margin:17px 0 12px}
-.workflow p{color:#9fa8c0;line-height:1.5}
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.step{background:linear-gradient(145deg,#151b2e,#101321);border:1px solid #252c43;border-radius:17px;padding:24px 15px;text-align:center;min-height:175px}
-.stepnum{width:29px;height:29px;margin:0 auto 16px;border-radius:50%;background:linear-gradient(135deg,#2879ff,#7548ff);display:grid;place-items:center;font-size:12px;font-weight:800}
-.step strong{display:block;font-size:13px;margin-bottom:8px}
-.step small{color:#9da6bd;line-height:1.45}
-.cta{margin:0 0 60px;padding:32px 38px;border:1px solid #303957;border-radius:23px;background:radial-gradient(ellipse at 8% 50%,#263a73 0,transparent 35%),linear-gradient(110deg,#141a2b,#090c16);display:flex;align-items:center;justify-content:space-between;gap:20px}
-.cta h2{font-size:28px;margin:0 0 7px;letter-spacing:-1px}
-.cta p{margin:0;color:#aab3c9}
-footer{border-top:1px solid #22283a;padding:28px 0;color:#8e97ad;font-size:12px}
-.foot{display:flex;align-items:center;justify-content:space-between;gap:20px}
-.footlinks{display:flex;gap:22px}
-#status{font-size:12px;color:#aebcff;margin-top:10px;min-height:18px}
-#videoFile{display:none}
-@media(max-width:1050px){.hero{grid-template-columns:1fr;gap:35px;padding-top:55px}.mockup{max-width:760px;width:100%;margin:auto}.featuregrid{grid-template-columns:repeat(3,1fr)}.workflow{grid-template-columns:1fr;gap:25px}}
-@media(max-width:650px){header{height:65px}.links{display:none}.brand{font-size:18px}.navright .signin{display:none}.navright .btn{padding:10px 12px;font-size:11px}.hero{padding:43px 0 30px;gap:28px}h1{font-size:47px;letter-spacing:-2.7px}.lead{font-size:15px}.linkform{flex-wrap:wrap}.linkform input{flex-basis:100%;padding:10px}.linkform button{width:100%}.mockup{padding:8px;transform:none}.mockbody{grid-template-columns:70px 1fr;gap:7px;min-height:220px}.mockside{padding:8px 1px}.mockside div{font-size:9px;padding:9px 4px}.preview{min-height:175px}.clips{grid-column:1/3;display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.clipshead{grid-column:1/4}.clip{display:block;margin:0;padding:5px;font-size:9px}.thumb{width:100%;height:36px;margin-bottom:5px}.cliptime{display:block;margin:4px 0 0}.timeline{grid-column:1/3}.featuregrid{grid-template-columns:repeat(2,1fr);gap:9px}.feature{padding:15px 12px;min-height:120px}.sectionhead h2{font-size:26px}.workflow h2{font-size:36px}.steps{grid-template-columns:1fr}.step{min-height:130px}.cta{padding:25px 20px;display:block}.cta .btn{margin-top:20px;width:100%}.foot{flex-direction:column;text-align:center}.footlinks{flex-wrap:wrap;justify-content:center}}
+:root{--bg:#080a12;--side:#0b0e18;--panel:#111522;--panel2:#151a2a;--line:#242b40;--muted:#98a2bb;--white:#f7f8ff;--blue:#3978ff;--purple:#7848ff;--cyan:#46c4ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--white);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}
+.app{min-height:100vh;display:grid;grid-template-columns:224px minmax(0,1fr)}
+.sidebar{background:linear-gradient(180deg,#0c0f19,#0a0c14);border-right:1px solid #20263a;padding:24px 17px 18px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+.brand{display:flex;align-items:center;gap:10px;font-weight:850;letter-spacing:-.5px;font-size:19px;padding:0 10px 34px}.brandmark{width:34px;height:34px;border-radius:11px;background:linear-gradient(140deg,#398aff,#7544ff);display:grid;place-items:center;box-shadow:0 0 22px #4a66ff55}.brandmark svg{width:19px;fill:#fff}
+.navlabel{font-size:10px;letter-spacing:1.5px;color:#66718c;font-weight:800;padding:0 12px 10px}.nav{display:grid;gap:5px}.nav button{border:0;background:transparent;color:#aab3ca;text-align:left;padding:12px 13px;border-radius:11px;font-size:13px;display:flex;align-items:center;gap:12px}.nav button:hover,.nav button.active{background:#1a2340;color:#fff}.nav button.active{box-shadow:inset 2px 0 #5483ff}.ico{width:19px;text-align:center;font-size:17px;color:#aebbe0}
+.upgrade{margin-top:auto;border:1px solid #3b3477;border-radius:16px;padding:16px;background:radial-gradient(circle at 100% 0,#392b82aa,transparent 55%),#15152a}.crown{color:#a98aff;font-size:22px}.upgrade strong{display:block;margin:7px 0;font-size:13px}.upgrade p{font-size:11px;color:#aab2ca;line-height:1.5;margin:0 0 13px}.upgrade button{width:100%;border:0;border-radius:10px;padding:10px;background:#f7f8ff;color:#111522;font-size:11px;font-weight:800}.profile{border-top:1px solid #20263a;margin:20px -17px 0;padding:18px 8px 0;display:flex;align-items:center;gap:10px;font-size:12px}.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(140deg,#59658d,#282f4c);display:grid;place-items:center;font-weight:800}.profile small{color:#8791a9;display:block;margin-top:3px}
+.main{min-width:0;padding:22px clamp(18px,3vw,42px) 38px;max-width:1800px;width:100%;margin:auto}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:28px}.search{max-width:540px;flex:1;position:relative}.search input{width:100%;background:#111522;border:1px solid #20273b;border-radius:30px;color:white;padding:13px 18px 13px 43px;outline:0;font-size:12px}.search input:focus{border-color:#536fff}.search span{position:absolute;left:16px;top:10px;color:#8995b2;font-size:18px}.topactions{display:flex;align-items:center;gap:10px}.iconbtn,.export{border:1px solid #252c41;background:#111522;color:#dbe1f5;border-radius:12px;padding:11px 13px}.export{border:0;background:linear-gradient(100deg,#5d43ff,#347cff);font-size:12px;font-weight:800;padding:12px 17px;box-shadow:0 7px 22px #544eff33}
+.hero{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(280px,.95fr) 265px;gap:17px;align-items:center;margin-bottom:26px}.intro{padding:20px 0}.eyebrow{display:inline-flex;gap:8px;align-items:center;color:#c7caff;background:#17172d;border:1px solid #38366b;border-radius:30px;padding:7px 11px;font-size:10px;font-weight:800;letter-spacing:.4px}.pulse{width:7px;height:7px;background:#9861ff;border-radius:50%;box-shadow:0 0 10px #9861ff}.intro h1{font-size:clamp(36px,4vw,59px);letter-spacing:-2.8px;line-height:1.02;margin:17px 0 14px}.gradient{background:linear-gradient(90deg,#9b58ff,#3c8bff);color:transparent;background-clip:text}.intro p{color:#aab4cc;font-size:14px;line-height:1.55;max-width:440px;margin:0 0 22px}.heroactions{display:flex;gap:10px;flex-wrap:wrap}.primary,.secondary{border:0;border-radius:28px;padding:13px 18px;font-size:12px;font-weight:800;display:inline-flex;align-items:center;gap:9px}.primary{background:#f6f7ff;color:#101321}.secondary{background:#171c2c;color:#e8ebf8;border:1px solid #2a324b}.primary:hover,.secondary:hover,.export:hover{transform:translateY(-1px);filter:brightness(1.08)}.hint{font-size:10px;color:#78839e;margin:12px 0 0 4px}
+.showcase{position:relative;border:1px solid #293252;border-radius:21px;padding:10px;background:linear-gradient(145deg,#151a2b,#0b0e18);box-shadow:0 18px 55px #0008,0 0 40px #444bff20;transform:rotate(-1deg)}.showcase:before{content:"";position:absolute;z-index:-1;width:65%;height:130%;top:-18%;left:20%;background:linear-gradient(130deg,#3726a8,#174b9d);filter:blur(65px);opacity:.34}.screenbar{display:flex;justify-content:space-between;color:#b6c0d8;font-size:10px;padding:4px 7px 10px}.screen{height:220px;border-radius:13px;overflow:hidden;position:relative;background:radial-gradient(circle at 50% 25%,#4565a2,#151e38 65%,#0b0d16);display:grid;place-items:center}.screenart{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 35%,#9cb3e8 0 8%,transparent 9%),radial-gradient(ellipse at 50% 45%,#d3a56d 0 19%,transparent 20%),linear-gradient(150deg,#244b85,#11172a 68%);opacity:.8}.screenart:before{content:"";position:absolute;width:170px;height:110px;border-radius:50% 50% 35% 35%;background:linear-gradient(120deg,#e9b777,#98663f);left:50%;top:23%;transform:translateX(-50%);box-shadow:0 10px 0 #6b482f}.screenart:after{content:"";position:absolute;width:110px;height:70px;border-radius:50%;background:#e6c18e;left:50%;top:40%;transform:translateX(-50%);box-shadow:inset 0 -12px #a35d4d}.play{z-index:1;width:48px;height:48px;border-radius:50%;background:#0b0d17c9;border:1px solid #ffffff55;display:grid;place-items:center;padding-left:3px;font-size:19px}.screenlabel{position:absolute;bottom:10px;left:11px;background:#080a12cc;border-radius:7px;padding:7px 9px;font-size:10px}
+.templates{border:1px solid #222a3d;background:linear-gradient(150deg,#121725,#0d101a);border-radius:17px;padding:14px}.panelhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:12px}.panelhead a{color:#7d9cff;font-size:10px}.template{display:flex;align-items:center;gap:10px;background:#171d2c;border:1px solid #252d42;border-radius:11px;padding:7px;margin-top:8px}.templatepic{width:49px;height:45px;border-radius:8px;display:grid;place-items:center;font-size:20px;background:linear-gradient(135deg,#614321,#171421)}.template:nth-of-type(3) .templatepic{background:linear-gradient(135deg,#4a7d54,#182a2a)}.template:nth-of-type(4) .templatepic{background:linear-gradient(135deg,#344d9b,#17172c)}.template:nth-of-type(5) .templatepic{background:linear-gradient(135deg,#72519a,#242039)}.template strong{display:block;font-size:10px}.template small{color:#9ba6bf;font-size:9px;display:block;margin-top:5px}
+.sectionrow{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:24px 0 13px}.sectionrow h2{font-size:18px;letter-spacing:-.5px;margin:0}.filters{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.filter{border:1px solid #252d42;background:#111522;color:#9ca7c0;border-radius:20px;padding:7px 12px;font-size:10px}.filter.active{background:linear-gradient(100deg,#6645ff,#386fff);color:#fff;border-color:transparent}.sort{background:#111522;border:1px solid #252d42;color:#b8c1d5;border-radius:20px;padding:7px 11px;font-size:10px}
+.projects{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.project{background:#111522;border:1px solid #222a3d;border-radius:14px;overflow:hidden;min-width:0}.projectthumb{height:112px;position:relative;display:grid;place-items:center;font-size:34px;background:linear-gradient(140deg,#23385d,#141b30)}.project:nth-child(2) .projectthumb{background:linear-gradient(140deg,#624b39,#1b1b27)}.project:nth-child(3) .projectthumb{background:linear-gradient(140deg,#286c60,#18273b)}.project:nth-child(4) .projectthumb{background:linear-gradient(140deg,#6d5544,#28283c)}.duration{position:absolute;bottom:8px;right:8px;background:#05070dcf;border-radius:5px;padding:4px 6px;font-size:9px}.projectbody{padding:10px 11px}.projectbody strong{font-size:11px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.projectbody small{color:#8f9ab4;font-size:9px;display:block;margin-top:6px}.projectbody small b{color:#aab7d5;font-weight:600}.empty{grid-column:1/-1;border:1px dashed #303a56;border-radius:14px;padding:24px;color:#9ba6bf;text-align:center;font-size:12px;display:none}
+.quickgrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:11px}.tool{background:linear-gradient(145deg,#151a29,#10131e);border:1px solid #222a3d;border-radius:14px;padding:15px 13px;min-width:0;text-align:left;color:white;transition:.18s}.tool:hover{border-color:#5968bb;transform:translateY(-2px)}.toolicon{font-size:20px;color:#8d68ff;margin-bottom:10px}.tool strong{display:block;font-size:11px}.tool small{display:block;color:#98a3bc;font-size:9px;margin-top:5px;line-height:1.35}
+.toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#202944;border:1px solid #5368b1;color:#f2f5ff;padding:12px 17px;border-radius:12px;font-size:12px;box-shadow:0 10px 35px #0009;transition:.25s;z-index:50;max-width:90%;text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}
+#videoInput{display:none}
+@media(max-width:1200px){.hero{grid-template-columns:1fr 1fr}.templates{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.templates .panelhead{grid-column:1/-1}.template{margin:0}.projects{grid-template-columns:repeat(2,minmax(0,1fr))}.quickgrid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:800px){.app{grid-template-columns:70px minmax(0,1fr)}.sidebar{padding:18px 9px}.brand{padding:0 8px 30px}.brandname,.navlabel,.navtext,.upgrade,.profile .pname{display:none}.brandmark{width:38px;height:38px}.nav button{justify-content:center;padding:12px 5px}.profile{justify-content:center;margin:20px -9px 0}.main{padding:17px 16px}.hero{grid-template-columns:1fr}.showcase{max-width:600px;width:100%;margin:0 auto}.templates{grid-column:auto;display:block}.template{margin-top:8px}.templatepic{width:40px;height:38px}.topbar{margin-bottom:17px}.intro{padding:5px 0}.intro h1{font-size:43px}.projects{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.app{grid-template-columns:58px minmax(0,1fr)}.sidebar{padding:14px 5px}.brand{padding:0 5px 25px}.brandmark{width:34px;height:34px}.nav button{font-size:16px;padding:12px 2px}.profile{margin-left:-5px;margin-right:-5px}.avatar{width:30px;height:30px}.main{padding:13px 11px}.topbar{gap:7px}.search input{padding:11px 10px 11px 33px;font-size:10px}.search span{left:11px;font-size:15px;top:8px}.topactions{gap:5px}.iconbtn{padding:9px}.export{padding:10px;font-size:10px}.intro h1{font-size:38px;letter-spacing:-2px}.intro p{font-size:12px}.heroactions button{flex:1;justify-content:center;padding:12px 9px;font-size:10px}.screen{height:185px}.sectionrow{align-items:flex-start;flex-direction:column}.projects{gap:8px}.projectthumb{height:85px}.projectbody{padding:8px}.projectbody strong{font-size:10px}.quickgrid{grid-template-columns:repeat(2,1fr);gap:8px}.tool{padding:12px 10px}.templates{padding:11px}.template strong{font-size:9px}}
 </style>
 </head>
 <body>
-<header>
-  <div class="wrap nav">
-    <a class="brand" href="#"><span class="brandmark"><svg viewBox="0 0 24 24"><path d="M7 4.8c0-1.5 1.7-2.4 3-1.6l11 7.2a1.9 1.9 0 0 1 0 3.2l-11 7.2c-1.3.8-3-.1-3-1.6V4.8Z"/></svg></span> DIMASCLIP</a>
-    <nav class="links"><a href="#features">Product⌄</a><a href="#workflow">Solutions⌄</a><a href="#workflow">Resources⌄</a><a href="#pricing">Pricing</a></nav>
-    <div class="navright"><a class="btn signin" href="#studio">Sign in</a><a class="btn primary" href="#studio">Get Started Free →</a></div>
-  </div>
-</header>
+<div class="app">
+<aside class="sidebar">
+  <a class="brand" href="#"><span class="brandmark"><svg viewBox="0 0 24 24"><path d="M7 4.8c0-1.5 1.7-2.4 3-1.6l11 7.2a1.9 1.9 0 0 1 0 3.2l-11 7.2c-1.3.8-3-.1-3-1.6V4.8Z"/></svg></span><span class="brandname">DIMASCLIP</span></a>
+  <div class="navlabel">WORKSPACE</div>
+  <nav class="nav">
+    <button class="active" data-page="Home"><span class="ico">⌂</span><span class="navtext">Home</span></button>
+    <button data-page="Projects"><span class="ico">▣</span><span class="navtext">Projects</span></button>
+    <button data-page="Templates"><span class="ico">▧</span><span class="navtext">Templates</span></button>
+    <button data-page="AI Tools"><span class="ico">✿</span><span class="navtext">AI Tools</span></button>
+    <button data-page="Analytics"><span class="ico">▥</span><span class="navtext">Analytics</span></button>
+    <button data-page="Settings"><span class="ico">⚙</span><span class="navtext">Settings</span></button>
+  </nav>
+  <div class="upgrade"><div class="crown">✦</div><strong>Upgrade your studio</strong><p>More creative tools and advanced workflows are on the roadmap.</p><button type="button" id="upgradeBtn">Explore features →</button></div>
+  <div class="profile"><div class="avatar">C</div><div class="pname">Creator<small>Free workspace</small></div></div>
+</aside>
 
-<main class="wrap">
-<section class="hero" id="studio">
-  <div>
-    <span class="pill"><span class="dot"></span> AI-POWERED VIDEO CLIPPING</span>
-    <h1>Turn Long Videos<br>Into <span class="gradient">Viral Shorts.</span></h1>
-    <p class="lead">Upload, clip, and edit with the power of AI. Create engaging short-form content with a workflow built for creators.</p>
-    <form class="linkform" id="linkForm">
-      <input id="videoLink" type="url" placeholder="↗  Paste YouTube link here..." aria-label="Paste video link">
-      <button class="btn primary" type="submit">Generate Clips →</button>
-    </form>
-    <div class="or">or</div>
-    <label class="upload" for="videoFile">⇧ <span>Upload a video</span></label>
-    <input id="videoFile" type="file" accept="video/*">
-    <p class="filehint">Choose a video file from your device. Short MP4 files work best for testing.</p>
-    <div id="status" role="status"></div>
-    <div class="trust"><div class="avatars"><span class="avatar">D</span><span class="avatar">C</span><span class="avatar">✦</span><span class="avatar">V</span></div><span>Made for creators</span><span class="stars">★★★★★</span><span>Creator-focused studio</span></div>
+<main class="main">
+  <div class="topbar">
+    <div class="search"><span>⌕</span><input id="searchInput" type="search" placeholder="Search projects, templates..."></div>
+    <div class="topactions"><button class="iconbtn" id="helpBtn" aria-label="Help">?</button><button class="iconbtn" id="noticeBtn" aria-label="Notifications">♧</button><button class="export" id="exportBtn">⇩ &nbsp; Export</button></div>
   </div>
 
-  <div class="mockup" aria-label="Preview of the DIMASCLIP editing interface">
-    <div class="mocktop"><span>▶ &nbsp; DIMASCLIP STUDIO</span><span>◐ &nbsp; ●</span></div>
-    <div class="mockbody">
-      <aside class="mockside"><div class="active">⌂ &nbsp; Home</div><div>▣ &nbsp; Projects</div><div>▤ &nbsp; Templates</div><div>✧ &nbsp; AI Tools</div><div>⚙ &nbsp; Settings</div></aside>
-      <div class="preview" id="previewBox"><div class="play">▶</div><span class="previewlabel" id="previewLabel">VIDEO PREVIEW · 9:16</span></div>
-      <div class="clips"><div class="clipshead"><strong>Clip workspace</strong><span>Preview</span></div><div class="clip"><div class="thumb">▶</div><span>Clip idea 01</span><span class="cliptime">00:12</span></div><div class="clip"><div class="thumb">▶</div><span>Clip idea 02</span><span class="cliptime">00:18</span></div><div class="clip"><div class="thumb">▶</div><span>Clip idea 03</span><span class="cliptime">00:09</span></div></div>
-      <div class="timeline"><span>▶</span><div class="track"></div><span>⛶</span></div>
+  <section class="hero">
+    <div class="intro">
+      <span class="eyebrow"><i class="pulse"></i> AI-POWERED VIDEO CLIPPING</span>
+      <h1>Turn Long Videos<br>Into <span class="gradient">Viral Shorts.</span></h1>
+      <p>Let AI do the hard work. Upload, clip, and create engaging short-form videos in one creator-focused workspace.</p>
+      <div class="heroactions"><button class="primary" id="uploadBtn">⇧ &nbsp; Upload Video</button><button class="secondary" id="pasteBtn">↗ &nbsp; Paste Video Link</button></div>
+      <input type="file" id="videoInput" accept="video/*">
+      <div class="hint">MP4, MOV, WEBM supported by your browser &nbsp; • &nbsp; Upload a video you own or have permission to edit</div>
     </div>
-  </div>
-</section>
+    <div class="showcase">
+      <div class="screenbar"><span>▶ &nbsp; DIMASCLIP STUDIO</span><span>✦ AI WORKSPACE</span></div>
+      <div class="screen" id="heroPreview"><div class="screenart"></div><div class="play">▶</div><span class="screenlabel">Create amazing clips with your ideas</span></div>
+    </div>
+    <aside class="templates">
+      <div class="panelhead"><strong>Popular Templates</strong><a href="#" id="seeTemplates">See all →</a></div>
+      <div class="template"><div class="templatepic">🏆</div><div><strong>Top 5 Ranking</strong><small>✦ Creator format</small></div></div>
+      <div class="template"><div class="templatepic">🐶</div><div><strong>Funny Moments</strong><small>✦ Comedy format</small></div></div>
+      <div class="template"><div class="templatepic">🎮</div><div><strong>Gaming Highlights</strong><small>✦ Gaming format</small></div></div>
+      <div class="template"><div class="templatepic">🎙️</div><div><strong>Podcast Clips</strong><small>✦ Talking format</small></div></div>
+    </aside>
+  </section>
 
-<section class="features" id="features">
-  <div class="sectionhead"><span class="pill"><span class="dot"></span> CREATOR TOOLKIT</span><h2>Everything you need in one studio.</h2><p>A clean workspace designed to make short-form video creation easier.</p></div>
-  <div class="featuregrid">
-    <article class="feature"><div class="featureicon">ϟ</div><h3>AI Clipping</h3><p>Find the strongest moments in your videos.</p></article>
-    <article class="feature"><div class="featureicon">CC</div><h3>Auto Captions</h3><p>Add readable subtitles to your clips.</p></article>
-    <article class="feature"><div class="featureicon">⛶</div><h3>Auto Reframe</h3><p>Prepare content for vertical platforms.</p></article>
-    <article class="feature"><div class="featureicon">▦</div><h3>Bulk Editing</h3><p>Organize multiple clip projects in one place.</p></article>
-    <article class="feature"><div class="featureicon">↗</div><h3>Virality Insights</h3><p>Review clip ideas and improve your hooks.</p></article>
-    <article class="feature"><div class="featureicon">⇩</div><h3>Video Export</h3><p>Export options will be added as the editor develops.</p></article>
-  </div>
-</section>
+  <div class="sectionrow"><h2>Your Projects <span style="color:#8299ff">›</span></h2><div class="filters"><button class="filter active" data-filter="All">All</button><button class="filter" data-filter="Drafts">Drafts</button><button class="filter" data-filter="Uploads">Uploads</button><button class="sort" id="sortBtn">Sort: Newest⌄</button></div></div>
+  <section class="projects" id="projectsGrid">
+    <div class="project"><div class="projectthumb">🎬<span class="duration">00:24</span></div><div class="projectbody"><strong>Anime Moments</strong><small>Demo project · <b>12 clip ideas</b></small></div></div>
+    <div class="project"><div class="projectthumb">🎙️<span class="duration">00:32</span></div><div class="projectbody"><strong>Podcast Highlights</strong><small>Demo project · <b>8 clip ideas</b></small></div></div>
+    <div class="project"><div class="projectthumb">🎮<span class="duration">00:28</span></div><div class="projectbody"><strong>Gaming Funny Moments</strong><small>Demo project · <b>10 clip ideas</b></small></div></div>
+    <div class="project"><div class="projectthumb">🐕<span class="duration">00:20</span></div><div class="projectbody"><strong>Dog Moments</strong><small>Demo project · <b>7 clip ideas</b></small></div></div>
+    <div class="empty" id="emptyState">No matching projects yet. Upload a video to start a project.</div>
+  </section>
 
-<section class="workflow" id="workflow">
-  <div><span class="pill"><span class="dot"></span> SIMPLE WORKFLOW</span><h2>Your videos.<br>Your creative studio.</h2><p>Start with a video, shape the moments you want, and prepare content for your favorite platforms.</p><a class="btn primary" href="#studio">Open the studio →</a></div>
-  <div class="steps">
-    <div class="step"><div class="stepnum">01</div><strong>Upload a video</strong><small>Choose a video file from your device.</small></div>
-    <div class="step"><div class="stepnum">02</div><strong>Edit your moments</strong><small>Build your clip workflow and refine your ideas.</small></div>
-    <div class="step"><div class="stepnum">03</div><strong>Export and share</strong><small>Export tools will arrive as processing features are added.</small></div>
-  </div>
-</section>
-
-<section class="cta" id="pricing">
-  <div><h2>Powerful tools. Creator-first.</h2><p>Explore the DIMASCLIP studio as it grows—no paid plan required to view this demo.</p></div>
-  <a class="btn primary" href="#studio">Start Creating →</a>
-</section>
+  <div class="sectionrow"><h2>Quick Tools</h2></div>
+  <section class="quickgrid">
+    <button class="tool" data-tool="AI Clipping"><div class="toolicon">ϟ</div><strong>AI Clipping</strong><small>Find the best moments</small></button>
+    <button class="tool" data-tool="AI Captions"><div class="toolicon">▣</div><strong>AI Captions</strong><small>Add animated subtitles</small></button>
+    <button class="tool" data-tool="Auto Reframe"><div class="toolicon">⛶</div><strong>Auto Reframe</strong><small>Prepare for every platform</small></button>
+    <button class="tool" data-tool="AI B-Roll"><div class="toolicon">▶</div><strong>AI B-Roll</strong><small>Plan supporting visuals</small></button>
+    <button class="tool" data-tool="Audio Enhance"><div class="toolicon">▥</div><strong>Audio Enhance</strong><small>Improve audio workflow</small></button>
+    <button class="tool" data-tool="Voiceover"><div class="toolicon">♩</div><strong>Voiceover</strong><small>Explore voice options</small></button>
+  </section>
 </main>
-<footer><div class="wrap foot"><a class="brand" href="#"><span class="brandmark"><svg viewBox="0 0 24 24"><path d="M7 4.8c0-1.5 1.7-2.4 3-1.6l11 7.2a1.9 1.9 0 0 1 0 3.2l-11 7.2c-1.3.8-3-.1-3-1.6V4.8Z"/></svg></span> DIMASCLIP</a><div class="footlinks"><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#workflow">How it works</a><a href="#studio">Studio</a></div><span>© 2026 DIMASCLIP. Built for creators.</span></div></footer>
-
+</div>
+<div class="toast" id="toast" role="status"></div>
 <script>
-const statusBox = document.getElementById('status');
-const fileInput = document.getElementById('videoFile');
-const previewBox = document.getElementById('previewBox');
-let currentPreviewUrl = null;
-
-fileInput.addEventListener('change', () => {
-  const file = fileInput.files && fileInput.files[0];
-  if (!file) return;
-  if (!file.type.startsWith('video/')) {
-    statusBox.textContent = 'Please choose a video file.';
-    return;
-  }
-  if (currentPreviewUrl) URL.revokeObjectURL(currentPreviewUrl);
-  currentPreviewUrl = URL.createObjectURL(file);
-  previewBox.innerHTML = '';
-  const video = document.createElement('video');
-  video.src = currentPreviewUrl;
-  video.controls = true;
-  video.playsInline = true;
-  video.style.cssText = 'width:100%;height:100%;min-height:220px;object-fit:contain;background:#05060b';
-  previewBox.appendChild(video);
-  statusBox.textContent = 'Video loaded for preview: ' + file.name + '. This demo does not cut or export clips yet.';
+const toastEl=document.getElementById('toast');
+let toastTimer;
+function toast(message){toastEl.textContent=message;toastEl.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toastEl.classList.remove('show'),3200)}
+const input=document.getElementById('videoInput');
+document.getElementById('uploadBtn').addEventListener('click',()=>input.click());
+input.addEventListener('change',()=>{
+  const file=input.files&&input.files[0];if(!file)return;
+  if(!file.type.startsWith('video/')){toast('Please select a video file.');return;}
+  const url=URL.createObjectURL(file);
+  const preview=document.getElementById('heroPreview');
+  preview.innerHTML='';
+  const video=document.createElement('video');video.src=url;video.controls=true;video.playsInline=true;
+  video.style.cssText='width:100%;height:100%;min-height:180px;object-fit:contain;background:#05060b';
+  preview.appendChild(video);
+  const project={name:file.name.replace(/\.[^/.]+$/,''),type:'Uploads',date:Date.now(),size:file.size};
+  const items=JSON.parse(localStorage.getItem('dimasclip_projects')||'[]');items.unshift(project);localStorage.setItem('dimasclip_projects',JSON.stringify(items));
+  addProject(project);
+  toast('Video loaded for preview and added to your project list. Actual AI clipping/export is not connected yet.');
 });
-
-document.getElementById('linkForm').addEventListener('submit', (event) => {
-  event.preventDefault();
-  const link = document.getElementById('videoLink').value.trim();
-  if (!link) {
-    statusBox.textContent = 'Paste a video link first.';
-    return;
-  }
-  try {
-    const parsed = new URL(link);
-    if (!['http:', 'https:'].includes(parsed.protocol)) throw new Error('Invalid');
-    localStorage.setItem('dimasclip_video_reference', link);
-    statusBox.textContent = 'Link saved as a project reference. Direct link importing and AI clipping are not connected yet.';
-  } catch {
-    statusBox.textContent = 'That link does not look valid. Please paste a full https:// link.';
-  }
+function addProject(project){
+  const grid=document.getElementById('projectsGrid');
+  const card=document.createElement('article');card.className='project';card.dataset.kind=project.type;
+  const thumb=document.createElement('div');thumb.className='projectthumb';thumb.textContent='🎞️';
+  const duration=document.createElement('span');duration.className='duration';duration.textContent='NEW';thumb.appendChild(duration);
+  const body=document.createElement('div');body.className='projectbody';
+  const title=document.createElement('strong');title.textContent=project.name;
+  const meta=document.createElement('small');meta.textContent='Just added · Video uploaded';
+  body.append(title,meta);card.append(thumb,body);grid.insertBefore(card,grid.querySelector('.empty'));
+}
+(JSON.parse(localStorage.getItem('dimasclip_projects')||'[]')).forEach(addProject);
+document.getElementById('pasteBtn').addEventListener('click',()=>{
+  const link=prompt('Paste a video link (this saves it as a project reference):');
+  if(!link)return;
+  try{const url=new URL(link);if(!['https:','http:'].includes(url.protocol))throw 0;localStorage.setItem('dimasclip_video_reference',url.href);toast('Video link saved as a reference. Direct importing and clipping are not connected yet.');}
+  catch{toast('Please enter a valid full http or https link.');}
+});
+document.querySelectorAll('.nav button').forEach(btn=>btn.addEventListener('click',()=>{
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  const page=btn.dataset.page;
+  if(page==='Home'){toast('You are on Home.');return;}
+  toast(page+' workspace is part of the interface preview; its full tools are still being built.');
+}));
+document.querySelectorAll('.tool').forEach(btn=>btn.addEventListener('click',()=>toast(btn.dataset.tool+' is on the roadmap. This preview button is not connected to an AI engine yet.')));
+document.getElementById('upgradeBtn').addEventListener('click',()=>toast('DIMASCLIP is being built as a free-first creator studio.'));
+document.getElementById('helpBtn').addEventListener('click',()=>toast('Welcome to DIMASCLIP Studio.'));
+document.getElementById('noticeBtn').addEventListener('click',()=>toast('You are all caught up.'));
+document.getElementById('exportBtn').addEventListener('click',()=>toast('Export will be enabled after the video rendering engine is added.'));
+document.getElementById('seeTemplates').addEventListener('click',e=>{e.preventDefault();toast('Template gallery is coming soon.');});
+document.getElementById('sortBtn').addEventListener('click',()=>toast('Projects are currently shown with newest uploads first.'));
+document.querySelectorAll('.filter').forEach(btn=>btn.addEventListener('click',()=>{
+  document.querySelectorAll('.filter').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  const cards=[...document.querySelectorAll('#projectsGrid .project')];
+  cards.forEach(card=>{card.style.display=(btn.dataset.filter==='All'||(btn.dataset.filter==='Uploads'&&card.dataset.kind==='Uploads')||(btn.dataset.filter==='Drafts'&&card.dataset.kind==='Drafts'))?'':'none';});
+  const any=cards.some(c=>c.style.display!=='none');document.getElementById('emptyState').style.display=any?'none':'block';
+}));
+document.getElementById('searchInput').addEventListener('input',e=>{
+  const q=e.target.value.toLowerCase();const cards=[...document.querySelectorAll('#projectsGrid .project')];
+  cards.forEach(card=>card.style.display=card.innerText.toLowerCase().includes(q)?'':'none');
+  document.getElementById('emptyState').style.display=cards.some(c=>c.style.display!=='none')?'none':'block';
 });
 </script>
 </body>
