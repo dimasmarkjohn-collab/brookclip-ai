@@ -1,0 +1,96 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BrookClip AI</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0b1020;color:#fff;font-family:Arial,sans-serif}
+header{padding:20px 7%;border-bottom:1px solid #26304a;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:22px;font-weight:bold;color:#a995ff}
+.tag{font-size:12px;color:#aeb5ca}
+main{max-width:850px;margin:65px auto;padding:20px;text-align:center}
+h1{font-size:clamp(35px,7vw,58px);margin-bottom:15px}
+h1 span{color:#9b80ff}
+p{color:#aeb5ca;line-height:1.7}
+.upload{margin:35px auto;padding:45px 20px;border:2px dashed #765aff;border-radius:18px;background:#151d35}
+.upload h3{margin-top:0}
+button,.filebtn{background:#7857ff;color:white;border:0;padding:13px 20px;border-radius:9px;font-weight:bold;cursor:pointer;display:inline-block}
+input[type=file]{display:none}
+select{background:#151d35;color:white;border:1px solid #39415c;padding:12px;border-radius:8px;margin:8px;max-width:100%}
+#filename{font-size:13px;color:#b8a9ff;margin:15px}
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:45px}
+.feature{background:#151d35;border:1px solid #29334e;padding:20px;border-radius:13px}
+.feature h3{font-size:15px}
+.feature p{font-size:12px}
+#message{display:none;background:#201b42;padding:15px;border-radius:10px;margin-top:20px;font-size:13px;color:#d8ceff}
+footer{padding:30px;text-align:center;color:#76809b;font-size:12px}
+@media(max-width:600px){.features{grid-template-columns:1fr}main{margin-top:35px}}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">✂ BROOKCLIP AI</div>
+<div class="tag">FREE CREATOR TOOLKIT</div>
+</header>
+
+<main>
+<div class="tag">AI VIDEO CLIPPING PLATFORM</div>
+<h1>Long videos.<br><span>Shorter work.</span></h1>
+<p>Turn podcasts, streams and interviews into engaging short-form videos.</p>
+
+<section class="upload">
+<h3>Upload your video</h3>
+<p>Choose an MP4, MOV or WEBM video from your device.</p>
+<label class="filebtn" for="video">Choose video ↑</label>
+<input id="video" type="file" accept="video/*">
+<div id="filename"></div>
+<br>
+<select id="ratio">
+<option>9:16 Shorts</option>
+<option>1:1 Square</option>
+<option>16:9 Landscape</option>
+</select>
+<br><br>
+<button onclick="generate()">Find my best moments ✦</button>
+<div id="message">Your video is selected! AI processing is not connected yet. That's our next development stage.</div>
+</section>
+
+<section class="features">
+<div class="feature">
+<h3>✦ AI Highlights</h3>
+<p>Find interesting moments in long videos.</p>
+</div>
+<div class="feature">
+<h3>▣ Auto Captions</h3>
+<p>Create subtitles for your short videos.</p>
+</div>
+<div class="feature">
+<h3>⚡ HD Export</h3>
+<p>Prepare vertical clips for Shorts and Reels.</p>
+</div>
+</section>
+</main>
+<footer>© 2026 BrookClip AI · Built for creators</footer>
+
+<script>
+const video=document.getElementById('video');
+video.addEventListener('change',()=>{
+const file=video.files[0];
+if(file){
+document.getElementById('filename').textContent=
+"Selected: "+file.name;
+}
+});
+function generate(){
+if(!video.files.length){
+alert("Please choose a video first!");
+return;
+}
+document.getElementById('message').style.display='block';
+}
+</script>
+</body>
+</html>
