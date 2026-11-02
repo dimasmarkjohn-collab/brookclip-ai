@@ -166,105 +166,263 @@ footer{border-top:1px solid #22283a;padding:28px 0;color:#8e97ad;font-size:12px}
 <footer><div class="wrap foot"><a class="brand" href="#"><span class="brandmark"><svg viewBox="0 0 24 24"><path d="M7 4.8c0-1.5 1.7-2.4 3-1.6l11 7.2a1.9 1.9 0 0 1 0 3.2l-11 7.2c-1.3.8-3-.1-3-1.6V4.8Z"/></svg></span> DIMASCLIP</a><div class="footlinks"><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#workflow">How it works</a><a href="#studio">Studio</a></div><span>© 2026 DIMASCLIP. Built for creators.</span></div></footer>
 
 <script>
-// DIMASCLIP backend connection
-// This URL is your deployed Render API. Keep it as the base URL only.
-const API_BASE = 'https://dimasclip-backend.onrender.com';
+// ===================================
+// DIMASCLIP FRONTEND v2.0
+// ===================================
 
-const statusBox = document.getElementById('status');
-const fileInput = document.getElementById('videoFile');
-const previewBox = document.getElementById('previewBox');
-const backendStatus = document.getElementById('backendStatus');
-const backendStatusText = document.getElementById('backendStatusText');
+const API_BASE = "https://dimasclip-backend.onrender.com";
+
+const statusBox = document.getElementById("status");
+const fileInput = document.getElementById("videoFile");
+const previewBox = document.getElementById("previewBox");
+const backendStatus = document.getElementById("backendStatus");
+const backendStatusText = document.getElementById("backendStatusText");
+const linkForm = document.getElementById("linkForm");
+const linkInput = document.getElementById("videoLink");
+const generateButton = linkForm.querySelector('button[type="submit"]');
+
 let currentPreviewUrl = null;
 let backendOnline = false;
+let currentProjectId = localStorage.getItem("dimasclip_project_id");
+
+// ===================================
+// API REQUEST HELPER
+// ===================================
+
+async function apiRequest(endpoint, options = {}) {
+  const response = await fetch(API_BASE + endpoint, options);
+  const result = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(result.error || "Request failed.");
+  }
+
+  return result;
+}
+
+// ===================================
+// BACKEND CONNECTION
+// ===================================
 
 async function checkBackend() {
-  backendStatus.classList.remove('online', 'offline');
-  backendStatusText.textContent = 'Connecting to DIMASCLIP engine...';
+  backendStatus.classList.remove("online", "offline");
+  backendStatusText.textContent = "Connecting to DIMASCLIP engine...";
+
   try {
-    const response = await fetch(`${API_BASE}/api/health`, { method: 'GET' });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const data = await response.json();
-    if (data.status !== 'healthy') throw new Error('Unexpected health response');
+    const result = await apiRequest("/api/health");
+
+    if (result.status !== "healthy") {
+      throw new Error("Backend unavailable.");
+    }
+
     backendOnline = true;
-    backendStatus.classList.add('online');
-    backendStatusText.textContent = 'Engine connected · Backend online';
+    backendStatus.classList.add("online");
+
+    backendStatusText.textContent =
+      "Engine connected · Version " + (result.version || "2.0");
+
   } catch (error) {
     backendOnline = false;
-    backendStatus.classList.add('offline');
-    backendStatusText.textContent = 'Backend not reachable · Tap refresh or try again later';
-    console.error('DIMASCLIP backend check failed:', error);
+    backendStatus.classList.add("offline");
+    backendStatusText.textContent = "Backend offline · Try again later";
+
+    console.error("Backend error:", error);
   }
 }
 
-fileInput.addEventListener('change', async () => {
-  const file = fileInput.files && fileInput.files[0];
+// ===================================
+// YOUTUBE LINK IMPORT
+// ===================================
+
+linkForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const link = linkInput.value.trim();
+
+  if (!link) {
+    statusBox.textContent = "Please paste a YouTube link.";
+    return;
+  }
+
+  try {
+    const parsed = new URL(link);
+
+    const allowedHosts = [
+      "youtube.com",
+      "www.youtube.com",
+      "m.youtube.com",
+      "youtu.be",
+      "www.youtube-nocookie.com",
+      "youtube-nocookie.com"
+    ];
+
+    if (
+      !["http:", "https:"].includes(parsed.protocol) ||
+      !allowedHosts.includes(parsed.hostname)
+    ) {
+      throw new Error("Please enter a valid YouTube link.");
+    }
+
+  } catch (error) {
+    statusBox.textContent = error.message || "Invalid YouTube link.";
+    return;
+  }
+
+  generateButton.disabled = true;
+  generateButton.textContent = "Importing...";
+  statusBox.textContent = "Connecting to DIMASCLIP...";
+
+  try {
+    if (!backendOnline) {
+      await checkBackend();
+    }
+
+    if (!backendOnline) {
+      throw new Error("Backend is unavailable.");
+    }
+
+    const result = await apiRequest("/api/import", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ url: link })
+    });
+
+    if (!result.project || !result.project.id) {
+      throw new Error("Project was not returned by the backend.");
+    }
+
+    currentProjectId = result.project.id;
+
+    localStorage.setItem(
+      "dimasclip_project_id",
+      currentProjectId
+    );
+
+    localStorage.setItem(
+      "dimasclip_video_reference",
+      link
+    );
+
+    statusBox.textContent =
+      "✓ YouTube link accepted! Project created. Upload an authorized video file to continue.";
+
+    console.log("DIMASCLIP project:", result.project);
+
+  } catch (error) {
+    statusBox.textContent = "Import failed: " + error.message;
+    console.error(error);
+
+  } finally {
+    generateButton.disabled = false;
+    generateButton.textContent = "Generate Clips →";
+  }
+});
+
+// ===================================
+// VIDEO FILE UPLOAD
+// ===================================
+
+fileInput.addEventListener("change", async () => {
+  const file = fileInput.files?.[0];
+
   if (!file) return;
 
-  if (!file.type.startsWith('video/')) {
-    statusBox.textContent = 'Please choose a video file.';
+  const allowedExtensions = /\.(mp4|mov|webm|m4v|mkv)$/i;
+
+  if (!allowedExtensions.test(file.name)) {
+    statusBox.textContent = "Please choose an MP4, MOV, WEBM, M4V, or MKV video.";
+    fileInput.value = "";
     return;
   }
 
   if (file.size > 100 * 1024 * 1024) {
-    statusBox.textContent = 'Video must be smaller than 100 MB.';
+    statusBox.textContent = "Video must be smaller than 100 MB.";
+    fileInput.value = "";
     return;
   }
 
-  if (currentPreviewUrl) URL.revokeObjectURL(currentPreviewUrl);
-  currentPreviewUrl = URL.createObjectURL(file);
-  previewBox.innerHTML = '';
+  if (currentPreviewUrl) {
+    URL.revokeObjectURL(currentPreviewUrl);
+  }
 
-  const video = document.createElement('video');
+  currentPreviewUrl = URL.createObjectURL(file);
+  previewBox.innerHTML = "";
+
+  const video = document.createElement("video");
   video.src = currentPreviewUrl;
   video.controls = true;
   video.playsInline = true;
-  video.style.cssText = 'width:100%;height:100%;min-height:220px;object-fit:contain;background:#05060b';
+
+  video.style.cssText =
+    "width:100%;height:100%;min-height:220px;object-fit:contain;background:#05060b";
+
   previewBox.appendChild(video);
 
-  statusBox.textContent = 'Uploading video to DIMASCLIP...';
+  const uploadButton = document.querySelector(".upload");
+
+  uploadButton.style.opacity = "0.6";
+  uploadButton.style.pointerEvents = "none";
+
+  statusBox.textContent = "Uploading video to DIMASCLIP...";
 
   try {
-    const formData = new FormData();
-    formData.append('video', file);
+    if (!backendOnline) {
+      await checkBackend();
+    }
 
-    const response = await fetch(`${API_BASE}/api/upload`, {
-      method: 'POST',
+    if (!backendOnline) {
+      throw new Error("Backend is unavailable.");
+    }
+
+    const formData = new FormData();
+    formData.append("video", file);
+
+    if (currentProjectId) {
+      formData.append("projectId", currentProjectId);
+    }
+
+    const result = await apiRequest("/api/upload", {
+      method: "POST",
       body: formData
     });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.error || 'Upload failed.');
 
-    statusBox.textContent = `Upload successful! ${result.file.name} received by DIMASCLIP.`;
-  } catch (error) {
-    statusBox.textContent = `Upload failed: ${error.message}`;
-  }
-});
-
-document.getElementById('linkForm').addEventListener('submit', async (event) => {
-  event.preventDefault();
-  const link = document.getElementById('videoLink').value.trim();
-  if (!link) {
-    statusBox.textContent = 'Paste a video link first.';
-    return;
-  }
-  try {
-    const parsed = new URL(link);
-    if (!['http:', 'https:'].includes(parsed.protocol)) throw new Error('Invalid');
-    localStorage.setItem('dimasclip_video_reference', link);
-    if (!backendOnline) await checkBackend();
-    if (backendOnline) {
-      statusBox.textContent = 'Backend connected! Link received in the page, but video importing and AI clip generation are the next development steps.';
-    } else {
-      statusBox.textContent = 'Your link is saved in this browser, but the backend is currently unreachable.';
+    if (!result.project || !result.project.id) {
+      throw new Error("Upload response did not include a project.");
     }
-  } catch {
-    statusBox.textContent = 'That link does not look valid. Please paste a full https:// link.';
+
+    currentProjectId = result.project.id;
+
+    localStorage.setItem(
+      "dimasclip_project_id",
+      currentProjectId
+    );
+
+    statusBox.textContent =
+      "✓ Upload successful! " +
+      (result.project.video?.name || file.name) +
+      " is now in your DIMASCLIP project.";
+
+    console.log("Upload complete:", result);
+
+  } catch (error) {
+    statusBox.textContent = "Upload failed: " + error.message;
+    console.error(error);
+
+  } finally {
+    uploadButton.style.opacity = "1";
+    uploadButton.style.pointerEvents = "auto";
+    fileInput.value = "";
   }
 });
 
-// Check the backend when the homepage opens.
+// ===================================
+// INITIALIZE DIMASCLIP
+// ===================================
+
 checkBackend();
+
 </script>
 </body>
 </html>
