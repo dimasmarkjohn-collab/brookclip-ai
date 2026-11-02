@@ -4,134 +4,62 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ClipForge AI - Free Video Studio</title>
+<title>DIMASCLIP AI Studio</title>
 
 <style>
-* { box-sizing:border-box; }
-
-body {
-  margin:0;
-  background:#0d0b16;
-  color:white;
-  font-family:Arial,sans-serif;
+*{box-sizing:border-box}
+body{
+margin:0;background:#0d0b16;color:white;
+font-family:Arial,sans-serif;
 }
-
-header {
-  padding:20px;
-  border-bottom:1px solid #292239;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+header{
+padding:20px;border-bottom:1px solid #302440;
+display:flex;justify-content:space-between;align-items:center;
 }
-
-.logo {
-  font-size:23px;
-  font-weight:bold;
-  color:#bd91ff;
+.logo{font-size:23px;font-weight:bold;color:#c49aff}
+.tag{
+background:#302344;color:#d6b8ff;
+padding:7px 12px;border-radius:20px;font-size:12px
 }
-
-.tag {
-  background:#29203b;
-  padding:7px 12px;
-  border-radius:20px;
-  font-size:12px;
-  color:#c9a9ff;
+main{max-width:850px;margin:auto;padding:20px 16px}
+.hero{text-align:center;padding:35px 0}
+.hero h1{font-size:36px}
+.hero span{color:#b987ff}
+.muted{color:#a49bb4;line-height:1.6}
+.card{
+background:#171322;border:1px solid #38294e;
+border-radius:18px;padding:20px;margin-bottom:18px
 }
-
-main {
-  max-width:850px;
-  margin:auto;
-  padding:25px 16px;
+.card h2{font-size:19px}
+input,select,textarea{
+width:100%;padding:14px;margin:8px 0;
+border-radius:10px;border:1px solid #49365e;
+background:#241e31;color:white;outline:none
 }
-
-.hero { text-align:center; margin:35px 0; }
-
-.hero h1 {
-  font-size:34px;
-  margin-bottom:10px;
+button{
+background:linear-gradient(100deg,#7542c5,#ad69f5);
+color:white;padding:14px;border:0;
+border-radius:10px;font-weight:bold;cursor:pointer
 }
-
-.hero h1 span { color:#b987ff; }
-
-.muted { color:#9992aa; line-height:1.6; }
-
-.card {
-  background:#171322;
-  border:1px solid #332747;
-  border-radius:17px;
-  padding:20px;
-  margin-bottom:18px;
+button:hover{opacity:.85}
+.full{width:100%}
+.grid{
+display:grid;grid-template-columns:repeat(2,1fr);gap:12px
 }
-
-.card h2 { font-size:18px; }
-
-input, textarea, select {
-  width:100%;
-  padding:14px;
-  margin:8px 0;
-  border-radius:10px;
-  border:1px solid #46365f;
-  background:#211c2d;
-  color:white;
-  outline:none;
+.feature{
+background:#211b30;padding:17px;border-radius:13px
 }
-
-button {
-  background:linear-gradient(100deg,#7542c5,#ad69f5);
-  color:white;
-  padding:13px 16px;
-  border:0;
-  border-radius:10px;
-  font-weight:bold;
-  cursor:pointer;
+.feature b{display:block;margin:7px 0}
+.output,.clip{
+background:#241e31;padding:14px;
+border-radius:10px;margin-top:12px;overflow-wrap:anywhere;
+white-space:pre-wrap
 }
-
-button:hover { opacity:.88; }
-
-.full { width:100%; }
-
-.grid {
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:12px;
-}
-
-.feature {
-  background:#211b30;
-  padding:17px;
-  border-radius:13px;
-}
-
-.feature b { display:block; margin-bottom:7px; }
-
-.output {
-  background:#211c2d;
-  padding:13px;
-  border-radius:10px;
-  margin-top:10px;
-  overflow-wrap:anywhere;
-  white-space:pre-wrap;
-}
-
-.clip {
-  padding:13px;
-  background:#211c2d;
-  border-radius:10px;
-  margin:10px 0;
-}
-
-small { color:#9992aa; }
-
-footer {
-  text-align:center;
-  padding:30px;
-  color:#777087;
-  font-size:12px;
-}
-
-@media(max-width:500px) {
-  .grid { grid-template-columns:1fr; }
-  .hero h1 { font-size:27px; }
+small{color:#a49bb4}
+footer{text-align:center;padding:30px;color:#81778f}
+@media(max-width:500px){
+.grid{grid-template-columns:1fr}
+.hero h1{font-size:29px}
 }
 </style>
 </head>
@@ -139,213 +67,190 @@ footer {
 <body>
 
 <header>
-  <div class="logo">✦ ClipForge AI</div>
-  <div class="tag">FREE EDITION</div>
+<div class="logo">✦ DIMASCLIP</div>
+<div class="tag">FREE EDITION</div>
 </header>
 
 <main>
 
 <section class="hero">
-  <h1>Turn Videos Into <span>Viral Clips.</span></h1>
-  <p class="muted">
-    Your simple video creation studio. Create hooks,
-    captions and manage multiple clips in one place.
-  </p>
+<h1>Your Videos. <span>Our Creative Studio.</span></h1>
+<p class="muted">
+Welcome to DIMASCLIP AI Studio.
+Create, organize and prepare your short-form content.
+</p>
 </section>
 
 <section class="card">
-  <h2>🔗 Import Your Video</h2>
-  <p class="muted">Paste your YouTube or TikTok video link.</p>
-
-  <input id="videoLink"
-    type="url"
-    placeholder="Paste your video URL here...">
-
-  <button class="full" onclick="addVideo()">
-    + Add Video
-  </button>
-
-  <p id="videoStatus" class="muted"></p>
+<h2>🔗 Paste Your Video Link</h2>
+<p class="muted">Add a YouTube or TikTok video URL.</p>
+<input id="videoLink" type="url"
+placeholder="Paste your video link here...">
+<button class="full" onclick="addVideo()">+ Add Video</button>
+<p id="videoStatus" class="muted"></p>
 </section>
 
 <section class="card">
-  <h2>✂️ Bulk Clip Workspace</h2>
-  <p class="muted">
-    Organize multiple clip ideas and track your editing progress.
-  </p>
-
-  <input id="clipName" placeholder="Enter clip name...">
-
-  <select id="clipLength">
-    <option value="15 seconds">15 seconds</option>
-    <option value="30 seconds">30 seconds</option>
-    <option value="45 seconds">45 seconds</option>
-    <option value="60 seconds">60 seconds</option>
-  </select>
-
-  <button class="full" onclick="addClip()">+ Add To Clip List</button>
-
-  <div id="clipList"></div>
+<h2>✂️ Bulk Clip Workspace</h2>
+<p class="muted">Organize multiple clip ideas in one place.</p>
+<input id="clipName" placeholder="Enter clip name...">
+<select id="clipLength">
+<option>15 seconds</option>
+<option>30 seconds</option>
+<option>45 seconds</option>
+<option>60 seconds</option>
+</select>
+<button class="full" onclick="addClip()">+ Add Clip</button>
+<div id="clipList"></div>
 </section>
 
 <section class="card">
-  <h2>📝 AI Caption & Hook Generator</h2>
-  <p class="muted">
-    Generate content ideas using your own topic or video description.
-  </p>
-
-  <input id="topic" placeholder="Example: Funny trampoline fails">
-
-  <button class="full" onclick="generateContent()">
-    Generate Ideas ✨
-  </button>
-
-  <div id="generated" class="output" style="display:none"></div>
-  <button id="copyBtn" style="display:none;margin-top:10px"
-    onclick="copyContent()">Copy Ideas</button>
+<h2>✨ AI Hook & Caption Generator</h2>
+<p class="muted">Generate creative ideas for your Shorts.</p>
+<input id="topic" placeholder="Example: Funny trampoline fails">
+<button class="full" onclick="generateContent()">Generate Ideas ✨</button>
+<div id="generated" class="output" style="display:none"></div>
+<button id="copyBtn" style="display:none;margin-top:10px"
+onclick="copyContent()">Copy Ideas</button>
 </section>
 
 <section class="card">
-  <h2>📱 Video Settings</h2>
-  <div class="grid">
-    <div class="feature">
-      <b>Aspect Ratio</b>
-      <select id="ratio">
-        <option>9:16 Vertical</option>
-        <option>16:9 Landscape</option>
-        <option>1:1 Square</option>
-      </select>
-    </div>
-    <div class="feature">
-      <b>Caption Style</b>
-      <select id="captionStyle">
-        <option>Clean</option>
-        <option>Bold</option>
-        <option>Minimal</option>
-      </select>
-    </div>
-  </div>
-  <p class="muted">These are project preferences; actual video rendering is not connected yet.</p>
+<h2>📱 Video Settings</h2>
+<div class="grid">
+<div class="feature">
+<b>Aspect Ratio</b>
+<select id="ratio">
+<option>9:16 Vertical</option>
+<option>16:9 Landscape</option>
+<option>1:1 Square</option>
+</select>
+</div>
+<div class="feature">
+<b>Caption Style</b>
+<select id="captionStyle">
+<option>Clean</option>
+<option>Bold</option>
+<option>Minimal</option>
+</select>
+</div>
+</div>
+<p class="muted">Choose your preferred editing settings.</p>
 </section>
 
 <section class="card">
-  <h2>📋 My Video Library</h2>
-  <div id="videoLibrary" class="muted">
-    No videos added yet.
-  </div>
+<h2>📂 My Video Library</h2>
+<div id="videoLibrary" class="muted">No videos added yet.</div>
 </section>
 
 <section class="card">
-  <h2>🚀 What's Included?</h2>
-  <div class="grid">
-    <div class="feature">✂️ <b>Clip Organizer</b><small>Manage clip ideas.</small></div>
-    <div class="feature">📝 <b>Caption Ideas</b><small>Create captions and hooks.</small></div>
-    <div class="feature">📦 <b>Bulk Workspace</b><small>Organize multiple clips.</small></div>
-    <div class="feature">📱 <b>Shorts Settings</b><small>Choose video formats.</small></div>
-  </div>
+<h2>🚀 DIMASCLIP Features</h2>
+<div class="grid">
+<div class="feature">✂️<b>Clip Organizer</b><small>Manage clip ideas.</small></div>
+<div class="feature">📝<b>Caption Generator</b><small>Prepare captions and hooks.</small></div>
+<div class="feature">📦<b>Bulk Workspace</b><small>Organize multiple clips.</small></div>
+<div class="feature">📱<b>Shorts Settings</b><small>Choose video formats.</small></div>
+<div class="feature">🔗<b>Link Manager</b><small>Keep video links organized.</small></div>
+<div class="feature">✨<b>Creative Studio</b><small>Plan your next content.</small></div>
+</div>
 </section>
 
 </main>
 
 <footer>
-  ClipForge AI © 2026 · Free Edition
+DIMASCLIP AI STUDIO © 2026 · FREE EDITION
 </footer>
 
 <script>
-let videos = [];
-let clips = [];
+let videos=[];
+let clips=[];
 
-function addVideo() {
-  const link = document.getElementById("videoLink").value.trim();
-  const status = document.getElementById("videoStatus");
-
-  try {
-    const url = new URL(link);
-    if (!["http:", "https:"].includes(url.protocol)) throw Error();
-
-    videos.push(link);
-    document.getElementById("videoLink").value = "";
-    status.textContent = "Video link added to your library!";
-    renderVideos();
-  } catch(e) {
-    status.textContent = "Please enter a valid video URL.";
-  }
+function escapeHTML(str){
+return str.replace(/[&<>"']/g,c=>({
+"&":"&amp;","<":"&lt;",">":"&gt;",
+'"':"&quot;","'":"&#39;"
+}[c]));
 }
 
-function renderVideos() {
-  document.getElementById("videoLibrary").innerHTML =
-    videos.map((v,i) =>
-      `<div class="clip">
-        Video ${i+1}<br>
-        <small>${escapeHTML(v)}</small>
-      </div>`
-    ).join("");
+function addVideo(){
+const link=document.getElementById("videoLink").value.trim();
+const status=document.getElementById("videoStatus");
+
+try{
+const url=new URL(link);
+if(!["http:","https:"].includes(url.protocol))throw Error();
+
+videos.push(link);
+document.getElementById("videoLink").value="";
+status.textContent="Video link added successfully!";
+renderVideos();
+}catch(e){
+status.textContent="Please enter a valid video URL.";
+}
 }
 
-function addClip() {
-  const name = document.getElementById("clipName").value.trim();
-  const length = document.getElementById("clipLength").value;
-
-  if(!name) return alert("Enter a clip name first!");
-
-  clips.push({name,length});
-  document.getElementById("clipName").value = "";
-  renderClips();
+function renderVideos(){
+document.getElementById("videoLibrary").innerHTML=
+videos.map((v,i)=>`
+<div class="clip">
+<b>Video ${i+1}</b><br>
+<small>${escapeHTML(v)}</small>
+</div>`).join("");
 }
 
-function renderClips() {
-  document.getElementById("clipList").innerHTML =
-    clips.map((c,i) =>
-      `<div class="clip">
-        <b>${escapeHTML(c.name)}</b>
-        <p><small>${escapeHTML(c.length)} · Clip ${i+1}</small></p>
-        <button onclick="removeClip(${i})">Remove</button>
-      </div>`
-    ).join("");
+function addClip(){
+const name=document.getElementById("clipName").value.trim();
+const length=document.getElementById("clipLength").value;
+if(!name)return alert("Enter a clip name first!");
+
+clips.push({name,length});
+document.getElementById("clipName").value="";
+renderClips();
 }
 
-function removeClip(i) {
-  clips.splice(i,1);
-  renderClips();
+function renderClips(){
+document.getElementById("clipList").innerHTML=
+clips.map((c,i)=>`
+<div class="clip">
+<b>${escapeHTML(c.name)}</b>
+<p><small>${escapeHTML(c.length)} · Clip ${i+1}</small></p>
+<button onclick="removeClip(${i})">Remove</button>
+</div>`).join("");
 }
 
-function generateContent() {
-  const topic = document.getElementById("topic").value.trim();
-  if(!topic) return alert("Enter a topic first!");
+function removeClip(i){
+clips.splice(i,1);
+renderClips();
+}
 
-  const result =
-`VIDEO TOPIC: ${topic}
+function generateContent(){
+const topic=document.getElementById("topic").value.trim();
+if(!topic)return alert("Enter a topic first!");
+
+const result=`TOPIC: ${topic}
 
 HOOK IDEAS:
-1. You won't believe what happens next...
+1. You won't believe what happens next!
 2. This moment caught everyone off guard!
 3. Wait until you see the last one!
 
 CAPTION IDEAS:
 1. Which moment was the funniest?
 2. Rate this moment from 1-10!
-3. Follow for more funny moments!
+3. Follow for more amazing clips!
 
 HASHTAGS:
-#Shorts #FunnyMoments #ViralClips`;
+#Shorts #FunnyMoments #DIMASCLIP`;
 
-  document.getElementById("generated").textContent = result;
-  document.getElementById("generated").style.display = "block";
-  document.getElementById("copyBtn").style.display = "inline-block";
+document.getElementById("generated").textContent=result;
+document.getElementById("generated").style.display="block";
+document.getElementById("copyBtn").style.display="inline-block";
 }
 
-function copyContent() {
-  const text = document.getElementById("generated").textContent;
-  navigator.clipboard.writeText(text)
-    .then(() => alert("Copied!"))
-    .catch(() => alert("Please select and copy the text manually."));
-}
-
-function escapeHTML(str) {
-  return str.replace(/[&<>"']/g, c => ({
-    "&":"&amp;", "<":"&lt;", ">":"&gt;",
-    '"':"&quot;", "'":"&#39;"
-  }[c]));
+function copyContent(){
+navigator.clipboard.writeText(
+document.getElementById("generated").textContent
+).then(()=>alert("Ideas copied!"))
+.catch(()=>alert("Please copy the text manually."));
 }
 </script>
 
