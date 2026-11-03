@@ -7,10 +7,25 @@ const path = require("path");
 const crypto = require("crypto");
 const ffmpeg = require("fluent-ffmpeg");
 const ffmpegPath = require("ffmpeg-static");
+const { Pool } = require("pg");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// PostgreSQL connection
+if (!process.env.DATABASE_URL) {
+  throw new Error("DATABASE_URL is missing from environment variables.");
+}
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false },
+  max: 5,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 10000
+});
+
+// Temporary video storage
 const uploadDir = "/tmp/dimasclip-uploads";
 const clipDir = path.join(uploadDir, "clips");
 
@@ -22,8 +37,47 @@ ffmpeg.setFfmpegPath(ffmpegPath);
 app.use(cors());
 app.use(express.json());
 
-const projects = new Map();
+// Async error handler
+const asyncHandler = (fn) => (req, res, next) => {
+  Promise.resolve(fn(req, res, next)).catch(next);
+};
 
+// Database setup
+async function initializeDatabase() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS projects (
+      id TEXT PRIMARY KEY,
+      project_data JSONB NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+  `);
+
+  console.log("DIMASCLIP PostgreSQL database connected.");
+}
+
+// Database helpers
+async function saveProject(project) {
+  await pool.query(
+    `INSERT INTO projects (id, project_data)
+     VALUES ($1, $2::jsonb)
+     ON CONFLICT (id)
+     DO UPDATE SET project_data = EXCLUDED.project_data`,
+    [project.id, JSON.stringify(project)]
+  );
+
+  return project;
+}
+
+async function getProject(id) {
+  const result = await pool.query(
+    "SELECT project_data FROM projects WHERE id = $1",
+    [id]
+  );
+
+  return result.rows[0]?.project_data || null;
+}
+
+// Video upload configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadDir),
   filename: (req, file, cb) => {
@@ -44,24 +98,30 @@ const upload = multer({
   }
 });
 
+// Homepage
 app.get("/", (req, res) => {
   res.json({
     name: "DIMASCLIP Backend",
     status: "online",
-    version: "3.0"
+    version: "3.1"
   });
 });
 
-app.get("/api/health", (req, res) => {
+// Health check
+app.get("/api/health", asyncHandler(async (req, res) => {
+  await pool.query("SELECT 1");
+
   res.json({
     status: "ok",
-    version: "3.0",
+    version: "3.1",
     engine: "connected",
+    database: "connected",
     videoProcessing: Boolean(ffmpegPath)
   });
-});
+}));
 
-app.post("/api/import", (req, res) => {
+// Import YouTube link
+app.post("/api/import", asyncHandler(async (req, res) => {
   const { url } = req.body;
 
   try {
@@ -91,64 +151,71 @@ app.post("/api/import", (req, res) => {
       createdAt: new Date().toISOString()
     };
 
-    projects.set(id, project);
+    await saveProject(project);
 
     res.json({
       success: true,
       message: "YouTube link accepted. Upload an authorized video file to continue.",
       project
     });
-  } catch {
-    res.status(400).json({ error: "Invalid URL." });
+  } catch (error) {
+    if (error instanceof TypeError) {
+      return res.status(400).json({ error: "Invalid URL." });
+    }
+    throw error;
   }
-});
+}));
 
-app.post("/api/upload", upload.single("video"), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: "No video file received." });
-  }
+// Upload video
+app.post(
+  "/api/upload",
+  upload.single("video"),
+  asyncHandler(async (req, res) => {
+    if (!req.file) {
+      return res.status(400).json({ error: "No video file received." });
+    }
 
-  let project = req.body.projectId
-    ? projects.get(req.body.projectId)
-    : null;
+    let project = req.body.projectId
+      ? await getProject(req.body.projectId)
+      : null;
 
-  if (!project) {
-    const id = crypto.randomUUID();
+    if (!project) {
+      project = {
+        id: crypto.randomUUID(),
+        sourceUrl: null,
+        status: "video_uploaded",
+        video: null,
+        clips: [],
+        createdAt: new Date().toISOString()
+      };
+    }
 
-    project = {
-      id,
-      sourceUrl: null,
-      status: "video_uploaded",
-      clips: [],
-      createdAt: new Date().toISOString()
+    project.video = {
+      name: req.file.originalname,
+      filename: req.file.filename,
+      path: req.file.path,
+      size: req.file.size
     };
 
-    projects.set(id, project);
-  }
+    project.status = "video_uploaded";
 
-  project.video = {
-    name: req.file.originalname,
-    filename: req.file.filename,
-    path: req.file.path,
-    size: req.file.size
-  };
+    await saveProject(project);
 
-  project.status = "video_uploaded";
+    res.json({
+      success: true,
+      message: "Video uploaded successfully.",
+      project: {
+        id: project.id,
+        video: { name: project.video.name },
+        status: project.status
+      }
+    });
+  })
+);
 
-  res.json({
-    success: true,
-    message: "Video uploaded successfully.",
-    project: {
-      id: project.id,
-      video: { name: project.video.name },
-      status: project.status
-    }
-  });
-});
-
-// Create a video clip using start time and duration
-app.post("/api/projects/:id/clip", (req, res) => {
-  const project = projects.get(req.params.id);
+// Create video clip
+app.post("/api/projects/:id/clip", asyncHandler(async (req, res) => {
+  const project = await getProject(req.params.id);
 
   if (!project || !project.video) {
     return res.status(404).json({
@@ -181,6 +248,7 @@ app.post("/api/projects/:id/clip", (req, res) => {
   const outputPath = path.join(clipDir, filename);
 
   project.status = "processing";
+  await saveProject(project);
 
   ffmpeg(project.video.path)
     .setStartTime(startTime)
@@ -188,26 +256,44 @@ app.post("/api/projects/:id/clip", (req, res) => {
     .videoCodec("libx264")
     .audioCodec("aac")
     .outputOptions(["-movflags +faststart"])
-    .on("end", () => {
-      const clip = {
-        filename,
-        url: `/api/clips/${filename}`,
-        startTime,
-        duration
-      };
+    .on("end", async () => {
+      try {
+        const clip = {
+          filename,
+          url: `/api/clips/${filename}`,
+          startTime,
+          duration
+        };
 
-      project.clips.push(clip);
-      project.status = "clip_created";
+        project.clips.push(clip);
+        project.status = "clip_created";
 
-      res.json({
-        success: true,
-        message: "Your clip is ready!",
-        clip
-      });
+        await saveProject(project);
+
+        res.json({
+          success: true,
+          message: "Your clip is ready!",
+          clip
+        });
+      } catch (error) {
+        console.error("Database save error:", error.message);
+
+        if (!res.headersSent) {
+          res.status(500).json({
+            error: "Clip created, but saving its project record failed."
+          });
+        }
+      }
     })
-    .on("error", (error) => {
-      project.status = "video_uploaded";
+    .on("error", async (error) => {
       console.error("FFmpeg error:", error.message);
+
+      try {
+        project.status = "video_uploaded";
+        await saveProject(project);
+      } catch (dbError) {
+        console.error("Database update error:", dbError.message);
+      }
 
       if (!res.headersSent) {
         res.status(500).json({
@@ -216,9 +302,9 @@ app.post("/api/projects/:id/clip", (req, res) => {
       }
     })
     .save(outputPath);
-});
+}));
 
-// Download a generated clip
+// Download generated clip
 app.get("/api/clips/:filename", (req, res) => {
   const filename = req.params.filename;
 
@@ -235,40 +321,71 @@ app.get("/api/clips/:filename", (req, res) => {
   res.download(filePath);
 });
 
-app.get("/api/projects", (req, res) => {
-  res.json({ projects: Array.from(projects.values()) });
-});
+// Get all projects
+app.get("/api/projects", asyncHandler(async (req, res) => {
+  const result = await pool.query(
+    "SELECT project_data FROM projects ORDER BY created_at DESC"
+  );
 
-app.get("/api/projects/:id", (req, res) => {
-  const project = projects.get(req.params.id);
+  res.json({
+    projects: result.rows.map(row => row.project_data)
+  });
+}));
+
+// Get one project
+app.get("/api/projects/:id", asyncHandler(async (req, res) => {
+  const project = await getProject(req.params.id);
 
   if (!project) {
     return res.status(404).json({ error: "Project not found." });
   }
 
   res.json({ project });
-});
+}));
 
-app.delete("/api/projects/:id", (req, res) => {
-  const project = projects.get(req.params.id);
+// Delete project
+app.delete("/api/projects/:id", asyncHandler(async (req, res) => {
+  const project = await getProject(req.params.id);
 
-  if (project?.video?.path && fs.existsSync(project.video.path)) {
+  if (!project) {
+    return res.status(404).json({ error: "Project not found." });
+  }
+
+  if (project.video?.path && fs.existsSync(project.video.path)) {
     fs.unlinkSync(project.video.path);
   }
 
-  projects.delete(req.params.id);
+  await pool.query(
+    "DELETE FROM projects WHERE id = $1",
+    [req.params.id]
+  );
 
   res.json({ success: true });
-});
+}));
 
+// Error handler
 app.use((error, req, res, next) => {
   console.error(error.message);
+
+  if (res.headersSent) return next(error);
 
   res.status(error instanceof multer.MulterError ? 400 : 500).json({
     error: error.message || "Something went wrong."
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`DIMASCLIP backend running on port ${PORT}`);
-});
+// Start server after database is ready
+async function startServer() {
+  try {
+    await initializeDatabase();
+
+    app.listen(PORT, () => {
+      console.log(`DIMASCLIP backend running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Failed to start DIMASCLIP:", error.message);
+    process.exit(1);
+  }
+}
+
+startServer();
